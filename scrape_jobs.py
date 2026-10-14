@@ -16,6 +16,12 @@ from urllib.parse import urljoin, urlparse
 import requests
 from bs4 import BeautifulSoup
 
+try:
+    from playwright.sync_api import sync_playwright
+    PLAYWRIGHT_AVAILABLE = True
+except ImportError:
+    PLAYWRIGHT_AVAILABLE = False
+
 MASSROBOTICS_URL = "https://www.massrobotics.org/startups/massrobotics-resident-startups/"
 OUTPUT_FILE = "jobs.html"
 REQUEST_TIMEOUT = 10
@@ -138,6 +144,24 @@ _BOARD_HREF_RE = re.compile(
 CAREERS_DOMAIN_BLACKLIST = {
     "expireddomains.com", "sedoparking.com", "godaddy.com",
     "parking.com", "dan.com", "sedo.com", "namecheap.com",
+}
+
+# Social media and job aggregator sites — never treat as a company's own careers page
+SOCIAL_AND_AGGREGATOR_DOMAINS = {
+    "linkedin.com", "twitter.com", "x.com", "facebook.com", "instagram.com",
+    "youtube.com", "glassdoor.com", "indeed.com", "ziprecruiter.com",
+    "monster.com", "wellfound.com", "angel.co", "builtinboston.com",
+}
+
+# Link text that unambiguously means "this company's own careers page"
+# (short, primary-nav terms). When a link has one of these exact texts,
+# we follow it to ANY external domain (not just known boards), since the
+# company might use a board we haven't seen before.
+PRIMARY_NAV_CAREER_TERMS = {
+    "careers", "career", "jobs", "job openings", "open positions",
+    "open roles", "join us", "join our team", "work with us",
+    "we're hiring", "we are hiring", "hiring", "openings", "employment",
+    "opportunities",
 }
 
 # Matches id/class names that indicate a layout chrome element (nav, header, footer)
@@ -298,14 +322,22 @@ def find_careers_url(company_url):
            any(kw in href_lower for kw in ["career", "jobs", "hiring", "openings",
                                             "opportunities", "positions"]):
             full_url = urljoin(company_url, href)
-            # Avoid external aggregator sites like LinkedIn
-            if urlparse(full_url).netloc == urlparse(company_url).netloc or \
-               any(board in full_url for board in [
-                   "lever.co", "greenhouse.io", "ashbyhq.com", "bamboohr.com",
-                   "workday.com", "myworkday.com", "icims.com", "smartrecruiters.com",
-                   "jobvite.com", "recruitee.com", "notion.so", "workable.com",
-                   "rippling.com",
-               ]):
+            if not full_url.startswith("http"):
+                continue
+            full_domain = urlparse(full_url).netloc
+
+            on_company = (company_domain in full_domain or full_domain in company_domain)
+            on_known_board = any(board in full_domain for board in KNOWN_JOB_BOARDS)
+            is_blocked = (
+                any(bd in full_domain for bd in CAREERS_DOMAIN_BLACKLIST) or
+                any(bd in full_domain for bd in SOCIAL_AND_AGGREGATOR_DOMAINS)
+            )
+            # Follow to an unknown external board when the link text is an
+            # unambiguous primary-nav career term (e.g. "Careers", "Jobs").
+            # This is how we catch boards we haven't explicitly seen before.
+            is_primary_nav = link_text.strip() in PRIMARY_NAV_CAREER_TERMS
+
+            if not is_blocked and (on_company or on_known_board or is_primary_nav):
                 time.sleep(REQUEST_DELAY)
                 return full_url
 
@@ -592,11 +624,13 @@ def extract_next_data_jobs(soup, page_url):
     return found if found else None
 
 
-def extract_jobs_from_html(url):
+def extract_jobs_from_html(url, soup=None):
     """
     Generic HTML scraper. Returns list of {"title": str, "url": str|None}.
+    If `soup` is provided, skips fetching (used by Playwright fallback).
     """
-    soup = get_soup(url)
+    if soup is None:
+        soup = get_soup(url)
     if soup is None:
         return []
 
@@ -827,6 +861,40 @@ def detect_embedded_job_board(careers_url):
 
 
 # ---------------------------------------------------------------------------
+# Playwright fallback for JS-rendered / Cloudflare-protected pages
+# ---------------------------------------------------------------------------
+
+def extract_jobs_with_playwright(url):
+    """
+    Fetch a page using a real browser (Playwright) and extract jobs from the
+    fully-rendered HTML. Used as a fallback when requests-based scraping
+    returns nothing — covers Cloudflare-protected boards, Next.js/React SPAs,
+    and any other board we haven't seen before.
+    """
+    if not PLAYWRIGHT_AVAILABLE:
+        return []
+    try:
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            ctx = browser.new_context(
+                user_agent=(
+                    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/124.0.0.0 Safari/537.36"
+                ),
+                viewport={"width": 1280, "height": 800},
+            )
+            page = ctx.new_page()
+            page.goto(url, wait_until="networkidle", timeout=30_000)
+            html = page.content()
+            browser.close()
+        soup = BeautifulSoup(html, "lxml")
+        return extract_jobs_from_html(url, soup=soup)
+    except Exception:
+        return []
+
+
+# ---------------------------------------------------------------------------
 # Main extractor dispatcher
 # ---------------------------------------------------------------------------
 
@@ -884,7 +952,13 @@ def extract_jobs(careers_url):
     if len(jobs) >= 3:
         strong = sum(1 for j in jobs if STRONG_KEYWORD_RE.search(j["title"]))
         if strong == 0:
-            return []
+            jobs = []
+
+    # If HTML scraping returned nothing, try a real browser. This covers
+    # Cloudflare-protected boards (e.g. Gusto), JS-rendered React/Next.js
+    # pages, and any board we haven't explicitly coded for.
+    if not jobs:
+        jobs = extract_jobs_with_playwright(careers_url)
 
     return jobs
 
@@ -1061,7 +1135,10 @@ def process_resident(resident, index, total):
         time.sleep(REQUEST_DELAY)
         jobs = extract_jobs(careers_url)
         with _PRINT_LOCK:
-            print(f"  -> {len(jobs)} job(s) found")
+            if jobs:
+                print(f"  -> {len(jobs)} job(s) found")
+            else:
+                print(f"  -> 0 jobs extracted  [CHECK MANUALLY: {careers_url}]")
     else:
         with _PRINT_LOCK:
             print("  -> no careers page found")
@@ -1108,6 +1185,14 @@ def main():
     print(
         f"\nDone: {total_jobs} jobs across {with_jobs}/{len(results)} companies."
     )
+
+    # Post-run manual check list: careers page found but 0 jobs extracted.
+    # These may use a JS-rendered board or an unsupported platform.
+    needs_check = [r for r in results if r["careers_url"] and not r["jobs"]]
+    if needs_check:
+        print(f"\n--- {len(needs_check)} companies need manual review (careers page found, 0 jobs extracted) ---")
+        for r in sorted(needs_check, key=lambda x: x["name"]):
+            print(f"  {r['name']}: {r['careers_url']}")
 
     generate_html(results)
 

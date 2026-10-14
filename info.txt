@@ -1,0 +1,12 @@
+I want to add a page to the massrobotics.org web site, which will list the jobs that the various massrobotics residents are hiring for.
+
+The list should contain an entry for each job.  Each entry should contain the resident's name, the job title, and a link to the job-listing page within the resident's web site.
+
+I would like the job-listing page to be refreshed hourly or daily, probably by a script.
+
+The names and links of the residents can be found here: https://www.massrobotics.org/startups/massrobotics-resident-startups/
+
+Make a script that collects the names and links to residents, and then for each one, look at their web page to find the list of roles they are hiring for.  This will be a different format and location for each resident.
+
+Use this information to create the full job list.
+
