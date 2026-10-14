@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 MassRobotics Job Listing Scraper
-Scrapes job listings from MassRobotics resident startup websites and generates jobs.html.
+Scrapes job listings from MassRobotics resident startup websites and generates jobs.html and index.html.
 """
 
 import json
@@ -23,7 +23,7 @@ except ImportError:
     PLAYWRIGHT_AVAILABLE = False
 
 MASSROBOTICS_URL = "https://www.massrobotics.org/startups/massrobotics-resident-startups/"
-OUTPUT_FILE = "jobs.html"
+OUTPUT_FILES = ["jobs.html", "index.html"]
 REQUEST_TIMEOUT = 10
 REQUEST_DELAY = 0.5  # seconds between requests
 
@@ -1030,9 +1030,9 @@ LOGO_URL = ("https://www.massrobotics.org/wp-content/uploads/2022/07/"
             "massrobotics-logo.jpg")
 
 
-def generate_html(results, output_path=OUTPUT_FILE):
+def generate_html(results, output_paths=OUTPUT_FILES):
     """
-    Generate the jobs.html output file.
+    Generate the output files (jobs.html and index.html).
     results: list of {name, site, careers_url, jobs}
     """
     with_jobs = [r for r in results if r["jobs"]]
@@ -1096,10 +1096,11 @@ def generate_html(results, output_path=OUTPUT_FILE):
 
     lines += ["</main>", "</body>", "</html>"]
 
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write("\n".join(lines))
-
-    print(f"Written to {output_path}")
+    html = "\n".join(lines)
+    for output_path in output_paths:
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(html)
+        print(f"Written to {output_path}")
 
 
 def _esc(text):
