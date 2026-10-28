@@ -1417,6 +1417,27 @@ header img { height: 44px; }
 header .header-text h1 { font-size: 1.2rem; font-weight: 700; color: #202731; }
 header .header-text p  { font-size: 0.8rem; color: #666; margin-top: 2px; }
 main { max-width: 960px; margin: 32px auto; padding: 0 16px; }
+[hidden] { display: none !important; }
+.search { display: flex; gap: 8px; margin-bottom: 16px; }
+.search input {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fff;
+}
+.search input:focus { outline: 2px solid #D90B1C; outline-offset: -1px; border-color: #D90B1C; }
+.search button {
+    font: inherit;
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #D90B1C;
+    cursor: pointer;
+}
+.search button[type="submit"] { background: #D90B1C; color: #fff; }
+.search .search-clear { background: #fff; color: #D90B1C; }
 .summary {
     background: #fff;
     border-radius: 6px;
@@ -1501,6 +1522,101 @@ LOGO_URL = ("https://www.massrobotics.org/wp-content/uploads/2022/07/"
             "massrobotics-logo.jpg")
 
 
+SEARCH_SCRIPT = r'''<script>
+// Search: on submit, show only the jobs whose title or location contains
+// every search word (ignoring case and accents), and only the companies with
+// at least one such job. Clearing the search shows everything again.
+(function () {
+  var form = document.querySelector(".search");
+  var input = document.getElementById("job-search");
+  var clear = form.querySelector(".search-clear");
+  var summary = document.querySelector(".summary-count");
+  var allJobs = summary.innerHTML;
+  var filtered = false;
+
+  function norm(s) {
+    return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+  function rows(company) {
+    return company.querySelectorAll("ul.jobs li:not(.jobs-head)");
+  }
+  function setCount(company, shown) {
+    var count = company.querySelector(".job-count");
+    if (!count.dataset.total) count.dataset.total = count.textContent;
+    count.textContent = shown === null ? count.dataset.total
+      : shown + " of " + count.dataset.total;
+  }
+
+  function apply(query) {
+    var words = norm(query).split(/\s+/);
+    var jobs = 0, companies = 0;
+    document.querySelectorAll(".company").forEach(function (company) {
+      var shown = 0;
+      rows(company).forEach(function (li) {
+        var loc = li.querySelector(".job-location");
+        var text = norm(li.querySelector(".job-title").textContent + " " +
+                        loc.textContent + " " + loc.title);
+        var match = words.every(function (w) { return text.indexOf(w) !== -1; });
+        li.hidden = !match;
+        if (match) shown++;
+      });
+      company.hidden = shown === 0;
+      setCount(company, shown);
+      jobs += shown;
+      if (shown) companies++;
+    });
+    clear.hidden = false;
+    filtered = true;
+    // Replace the "N open roles found" line with the search result
+    summary.textContent = "";
+    if (jobs === 0) {
+      summary.append("No jobs match \u201c" + query + "\u201d. Try a different job " +
+                     "title or location, or clear the search to see all jobs.");
+    } else {
+      summary.append(bold(jobs), " role" + (jobs === 1 ? "" : "s") + " at ",
+                     bold(companies), " compan" + (companies === 1 ? "y" : "ies") +
+                     " match \u201c" + query + "\u201d.");
+    }
+  }
+
+  function bold(n) {
+    var b = document.createElement("strong");
+    b.textContent = n;
+    return b;
+  }
+
+  function reset() {
+    document.querySelectorAll(".company").forEach(function (company) {
+      company.hidden = false;
+      rows(company).forEach(function (li) { li.hidden = false; });
+      setCount(company, null);
+    });
+    summary.innerHTML = allJobs;
+    clear.hidden = true;
+    filtered = false;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var query = input.value.trim();
+    if (query) apply(query); else reset();
+  });
+  clear.addEventListener("click", function () {
+    input.value = "";
+    reset();
+    input.focus();
+  });
+  // Emptying the box (typing it away, the browser's x, or Escape) cancels
+  input.addEventListener("input", function () {
+    if (filtered && !input.value.trim()) reset();
+  });
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { input.value = ""; reset(); }
+  });
+})();
+</script>'''
+
+
 SORT_SCRIPT = """<script>
 // Clicking "Posted" or "Location" sorts every company's job list by that
 // column; clicking it again reverses the order. Jobs missing the value
@@ -1562,8 +1678,14 @@ def generate_html(results, output_paths=OUTPUT_FILES):
         "  </div>",
         "</header>",
         "<main>",
+        '<form class="search" role="search">',
+        '  <input type="search" id="job-search" placeholder="Search job titles or locations, e.g. engineer, Boston, remote" aria-label="Search job titles or locations" autocomplete="off">',
+        '  <button type="submit">Search</button>',
+        '  <button type="button" class="search-clear" hidden>Clear</button>',
+        '</form>',
         '<div class="summary">',
-        f"  <strong>{total_jobs}</strong> open roles found",
+        f'  <span class="summary-count" aria-live="polite">'
+        f"<strong>{total_jobs}</strong> open roles found</span>",
         '  <p class="disclaimer">We never charge for listing jobs. MassRobotics is '
         "not a job board or recruiter. These listings are all scraped from public "
         "data; we offer no guarantee on the accuracy of the data.</p>",
@@ -1619,7 +1741,7 @@ def generate_html(results, output_paths=OUTPUT_FILES):
         lines.append("  </ul>")
         lines.append("</div>")
 
-    lines += ["</main>", SORT_SCRIPT, "</body>", "</html>"]
+    lines += ["</main>", SORT_SCRIPT, SEARCH_SCRIPT, "</body>", "</html>"]
 
     html = "\n".join(lines)
     for output_path in output_paths:
