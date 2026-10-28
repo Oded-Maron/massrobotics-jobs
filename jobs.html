@@ -7,7 +7,8 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: "Avenir", "Avenir Next", -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, sans-serif;
     background: #f4f4f4;
     color: #202731;
     line-height: 1.6;
@@ -34,6 +35,8 @@ main { max-width: 960px; margin: 32px auto; padding: 0 16px; }
     color: #202731;
 }
 .summary strong { color: #D90B1C; }
+.summary .disclaimer { font-size: 0.8rem; color: #666; margin-top: 6px; }
+.summary .intro { font-size: 0.95rem; margin-top: 12px; }
 .company {
     background: #fff;
     border: 1px solid #ddd;
@@ -43,20 +46,59 @@ main { max-width: 960px; margin: 32px auto; padding: 0 16px; }
 }
 .company-header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 12px;
     margin-bottom: 8px;
 }
-.company-name { font-size: 1rem; font-weight: 700; }
-.company-name a { color: #202731; text-decoration: none; }
-.company-name a:hover { color: #D90B1C; }
-.careers-link { font-size: 0.8rem; color: #666; }
-.careers-link a { color: #D90B1C; text-decoration: none; }
-.careers-link a:hover { text-decoration: underline; }
-.job-count { font-size: 0.8rem; color: #888; margin-left: auto; }
+.company-name { font-size: 2rem; line-height: 1.2; font-weight: 700; margin-left: auto; text-align: right; }
+.company-name a { color: #D90B1C; text-decoration: none; }
+.company-logo-link { display: inline-flex; }
+.company-logo { height: 56px; max-width: 240px; object-fit: contain; }
+.company-desc { font-size: 0.85rem; color: #555; margin-bottom: 10px; }
+.company-name a:hover { text-decoration: underline; }
+.job-count { font-size: 1rem; color: #888; white-space: nowrap; }
 ul.jobs { list-style: none; padding-left: 8px; }
-ul.jobs li { padding: 4px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+ul.jobs li {
+    display: grid;
+    grid-template-columns: 1fr 6.5em 8em;
+    gap: 12px;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+ul.jobs li .job-date, ul.jobs li .job-location {
+    text-align: right;
+    font-size: 0.8rem;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@media (max-width: 560px) {
+    .company-name { font-size: 1.4rem; }
+    .company-logo { height: 40px; max-width: 160px; }
+    ul.jobs li { grid-template-columns: 1fr 8em; gap: 0 12px; }
+    ul.jobs li .job-title { grid-column: 1 / -1; }
+}
 ul.jobs li:last-child { border-bottom: none; }
+.sort-btn {
+    all: unset;
+    cursor: pointer;
+    text-align: right;
+}
+.sort-btn:hover, .sort-btn[data-dir] { color: #D90B1C; }
+.sort-btn:focus-visible { outline: 2px solid #D90B1C; outline-offset: 2px; }
+.sort-btn[data-dir="asc"]::after { content: " ▲"; }
+.sort-btn[data-dir="desc"]::after { content: " ▼"; }
+ul.jobs li.jobs-head {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: right;
+}
 ul.jobs li a { color: #D90B1C; text-decoration: none; }
 ul.jobs li a:hover { text-decoration: underline; }
 ul.jobs li .no-link { color: #333; }
@@ -67,403 +109,631 @@ ul.jobs li .no-link { color: #333; }
   <img src="https://www.massrobotics.org/wp-content/uploads/2022/07/massrobotics-logo.jpg" alt="MassRobotics">
   <div class="header-text">
     <h1>Resident Jobs</h1>
-    <p>Last updated: 2026-10-14 10:29:26</p>
+    <p>Last updated: 2026-10-28 18:33:52</p>
   </div>
 </header>
 <main>
 <div class="summary">
-  <strong>246</strong> open roles found
+  <strong>342</strong> open roles found
+  <p class="disclaimer">We never charge for listing jobs. MassRobotics is not a job board or recruiter. These listings are all scraped from public data; we offer no guarantee on the accuracy of the data.</p>
+  <p class="intro">MassRobotics resident startups are dynamic companies dedicated to advancing robotics and supporting technologies. They aim to transform how we live, work, and play through innovative solutions. Joining MassRobotics means becoming part of a global community of experts and like-minded entrepreneurs. These startups cover a range of stages, from concept to manufacturing, and focus on robotics, Physical AI, and connected devices.</p>
+  <p class="intro">See below for opportunities across the globe.</p>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="https://www.activsurgical.com" target="_blank">Activ Surgical</a></span>
-    <span class="careers-link"><a href="https://apply.workable.com/activ-2/?lng=en" target="_blank">careers page</a></span>
-    <span class="job-count">3 roles</span>
-  </div>
-  <ul class="jobs">
-    <li><a href="https://apply.workable.com/activ-2/j/FFE0EB0423/" target="_blank">Senior or Staff System Engineer</a></li>
-    <li><a href="https://apply.workable.com/activ-2/j/322CB635E1/" target="_blank">Senior or Staff Mechanical Engineer</a></li>
-    <li><a href="https://apply.workable.com/activ-2/j/B2CCAF5730/" target="_blank">Senior or Staff Imaging Engineer</a></li>
-  </ul>
-</div>
-<div class="company">
-  <div class="company-header">
-    <span class="company-name"><a href="https://acumino.ai" target="_blank">ACUMINO</a></span>
-    <span class="careers-link"><a href="https://acumino.ai/jobs/" target="_blank">careers page</a></span>
-    <span class="job-count">7 roles</span>
-  </div>
-  <ul class="jobs">
-    <li><span class="no-link">Cloud Infrastructure Engineer</span></li>
-    <li><span class="no-link">Robot Learning Engineer</span></li>
-    <li><span class="no-link">Robot Manipulation Engineer</span></li>
-    <li><span class="no-link">Mechatronics Engineer â Grippers, Tools &amp; Data Interfaces</span></li>
-    <li><span class="no-link">Software Engineer</span></li>
-    <li><span class="no-link">UI/UX Designer</span></li>
-    <li><span class="no-link">Forward Deployed Engineer</span></li>
-  </ul>
-</div>
-<div class="company">
-  <div class="company-header">
-    <span class="company-name"><a href="https://www.algorized.com" target="_blank">Algorized</a></span>
-    <span class="careers-link"><a href="https://jobs.lever.co/algorized/" target="_blank">careers page</a></span>
-    <span class="job-count">3 roles</span>
-  </div>
-  <ul class="jobs">
-    <li><a href="https://jobs.lever.co/algorized/70911acd-7603-424a-b502-36652f686dd6" target="_blank">Senior Functional Safety Engineer - Robotics</a></li>
-    <li><a href="https://jobs.lever.co/algorized/04c5e8a3-f51a-47c2-bd5a-06d8ae307874" target="_blank">Senior ML Data Scientist - Wireless People Sensing</a></li>
-    <li><a href="https://jobs.lever.co/algorized/5b574902-a737-427a-b703-f708c09f1001" target="_blank">Senior ML Data Scientist - Wireless People Sensing</a></li>
-  </ul>
-</div>
-<div class="company">
-  <div class="company-header">
-    <span class="company-name"><a href="http://cleorobotics.com" target="_blank">Cleo</a></span>
-    <span class="careers-link"><a href="https://ats.rippling.com/cleo-robotics/jobs" target="_blank">careers page</a></span>
+    <a class="company-logo-link" href="https://www.ableinnovations.com/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2025/06/AI-full-logo_transparent_PNG-Tedra-Stewart-1500x458.png" alt="Able Innovations" loading="lazy"></a>
+    <span class="company-name"><a href="https://www.ableinnovations.com/careers" target="_blank">Able Innovations career page</a></span>
     <span class="job-count">1 role</span>
   </div>
+  <p class="company-desc">Able Innovations’ ALTA Platform® is a smart robotic device, designed to advance the standard of care for patient transfers in healthcare. This automated system is the first of its kind that enables lateral patient transfers to be conducted effortlessly, safely and in a more dignified manner by just one frontline staff.</p>
   <ul class="jobs">
-    <li><a href="https://ats.rippling.com/cleo-robotics/jobs/7574279e-28fb-4534-9feb-88e5ea0a679c" target="_blank">Robotics Autonomy Engineer</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><span class="job-title no-link">Lead Hardware Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="https://codemetal.ai" target="_blank">Code Metal</a></span>
-    <span class="careers-link"><a href="https://www.codemetal.ai/careers" target="_blank">careers page</a></span>
-    <span class="job-count">29 roles</span>
+    <a class="company-logo-link" href="https://apply.workable.com/activ-2/?lng=en" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2022/11/Untitled-design-2022-11-23T141218.761.png" alt="Activ Surgical" loading="lazy"></a>
+    <span class="company-name"><a href="https://apply.workable.com/activ-2/?lng=en" target="_blank">Activ Surgical career page</a></span>
+    <span class="job-count">2 roles</span>
   </div>
+  <p class="company-desc">Activ Surgical is a digital surgery innovator, with patent issued and FDA clearance for ActivSight Intraoperative Imaging Module for enhanced surgical visualization. They are building hardware-agnostic surgical software that allows minimally invasive surgical systems to autonomously collaborate with surgeons.</p>
   <ul class="jobs">
-    <li><a href="https://jobs.ashbyhq.com/code-metal/108e4472-03d2-44dd-8d5c-78c075036b2d" target="_blank">Senior AI Platform Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/8913e9bf-7cf5-463c-8c25-c8699e1f0ae5" target="_blank">Senior Hardware Engineer (RTL / High-Level Synthesis)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/fe3316c3-c5e2-44b3-af49-b920523a1709" target="_blank">Senior Software Engineer (Compiler &amp; AI Tooling)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/e6ead28d-6828-45a4-8b44-09beba103183" target="_blank">Senior Software Engineer, Code Transpilation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/d940836d-3c14-4ac4-a16b-e0d690320f99" target="_blank">Staff AI Platform Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/387734b5-9dfe-4b78-983b-fcd14de10b59" target="_blank">Applied AI Research Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/550aed7b-86d2-48c3-af27-e61671e2d493" target="_blank">Research Engineer - Formal Methods</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/340da1fb-0098-4c01-99f7-1415237d2f06" target="_blank">Account Executive - Defense</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/7ac6cf7b-8296-47e7-9a42-742b8b46af76" target="_blank">Account Executive, Financial Services</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/e1c2a095-3219-41be-aa80-d3909244d1a6" target="_blank">Director of Growth - Intelligence Community</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/f9778fbe-56e9-4000-9e61-09abad05f9dc" target="_blank">Director of Growth - Navy</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/a3aacda4-c920-44e3-b609-af7bde574704" target="_blank">Director of Growth - USMC</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/92280c18-5263-4c64-8ade-701a983a66b2" target="_blank">Engagement Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/a6acbbd8-4c73-48db-8780-cd3abf886c16" target="_blank">Proposal Coordinator</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/a6d25a63-446e-4c04-964b-775b6ee9e240" target="_blank">Lead Backend Engineer (Modeling &amp; Simulation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/260d46b7-1f18-414a-8422-75cb15526eea" target="_blank">Principal Physics Engine Programmer, C++ (Modeling &amp; Simulation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/ae03efea-f053-4067-8a2c-52306a802995" target="_blank">Principal Python Engineer (Modeling &amp; Simulation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/b110301c-5000-4752-bfc8-5bd7cde3cba1" target="_blank">Senior Product Manager (Modeling &amp; Simulation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/0666434f-26d9-46b7-a7fe-3260ccc937d8" target="_blank">Senior Python Engineer (Modeling &amp; Simulation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/92c961bb-4e87-48af-8270-781f05ee8393" target="_blank">Staff Physics Engine Programmer, C++ (Modeling &amp; Simulation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/b7787423-1800-4f2c-bc01-6966aa08cede" target="_blank">Staff Python Engineer (Modeling &amp; Simulation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/8ae6e402-8995-4a4b-b876-4e83933c1187" target="_blank">Director, GTM Operations</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/6d0b5b63-9fd0-4656-8b27-5b018913bf33" target="_blank">Senior Product Manager - Code Translation &amp; Developer Tooling</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/0ec68c93-f625-4d6f-b489-c483550c0158" target="_blank">Forward Deployed Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/9623639f-0a6f-4177-aa74-805872b3327f" target="_blank">Head of Security</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/01251b47-a300-4323-8e6a-05e2487228bb" target="_blank">Senior Platform DevOps Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/63ba3ce6-7169-46dc-a0b0-d099131abc7c" target="_blank">Solutions Architect</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/fc471444-dfef-43df-95a8-ad55d3240a2a" target="_blank">Solutions Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/code-metal/045cbaea-527b-4b89-ab01-6a64fadeecb6" target="_blank">Staff Software Engineer in Test, Compiler &amp; Systems Validation</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-09-16"><a class="job-title" href="https://apply.workable.com/activ-2/j/FFE0EB0423/" target="_blank">Senior or Staff System Engineer</a><span class="job-date">Sep 16, 2026</span><span class="job-location" title="Boston, Massachusetts (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-08-14"><a class="job-title" href="https://apply.workable.com/activ-2/j/B2CCAF5730/" target="_blank">Senior or Staff Imaging Engineer</a><span class="job-date">Aug 14, 2026</span><span class="job-location" title="Boston, Massachusetts (hybrid)">Hybrid</span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="http://flexxbotics.com" target="_blank">Flexxbotics</a></span>
-    <span class="careers-link"><a href="https://flexxbotics.com/careers/" target="_blank">careers page</a></span>
-    <span class="job-count">5 roles</span>
+    <a class="company-logo-link" href="https://acumino.ai/jobs/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2025/12/ACUMINO-OFFCIAL-BRAND-1500x188.png" alt="ACUMINO" loading="lazy"></a>
+    <span class="company-name"><a href="https://acumino.ai/jobs/" target="_blank">ACUMINO career page</a></span>
+    <span class="job-count">7 roles</span>
   </div>
+  <p class="company-desc">Acumino’s purpose is to revolutionize industrial automation by providing next-generation, AI-powered robot workers that handle dexterous, repetitive, and dangerous tasks, enhancing productivity and safety. Our mission is to lead the final industrial revolution with ultraflexible robotics solutions that deliver reliability and return on investment.</p>
   <ul class="jobs">
-    <li><a href="https://flexxbotics.com/careers/account-executive/" target="_blank">Account Executive</a></li>
-    <li><a href="https://flexxbotics.com/careers/senior-automation-interfacing-software-engineer/" target="_blank">Senior Automation Interfacing Software Engineer</a></li>
-    <li><a href="https://flexxbotics.com/careers/software-engineer/" target="_blank">Software Engineer</a></li>
-    <li><a href="https://flexxbotics.com/careers/robotics-and-interfacing-engineer/" target="_blank">Robotics and Interfacing Engineer</a></li>
-    <li><a href="https://flexxbotics.com/careers/sales-development-representative/" target="_blank">Sales Development Representative</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><span class="job-title no-link">Cloud Infrastructure Engineer</span><span class="job-date"></span><span class="job-location" title="Athens, Greece; Auckland, New Zealand">Multiple</span></li>
+    <li data-posted=""><span class="job-title no-link">Robot Learning Engineer</span><span class="job-date"></span><span class="job-location" title="Athens, Greece; Auckland, New Zealand">Multiple</span></li>
+    <li data-posted=""><span class="job-title no-link">Robot Manipulation Engineer</span><span class="job-date"></span><span class="job-location" title="Athens, Greece; Auckland, New Zealand">Multiple</span></li>
+    <li data-posted=""><span class="job-title no-link">Mechatronics Engineer — Grippers, Tools &amp; Data Interfaces</span><span class="job-date"></span><span class="job-location" title="Athens, Greece; Auckland, New Zealand">Multiple</span></li>
+    <li data-posted=""><span class="job-title no-link">Software Engineer</span><span class="job-date"></span><span class="job-location" title="Athens, Greece; Auckland, New Zealand">Multiple</span></li>
+    <li data-posted=""><span class="job-title no-link">UI/UX Designer</span><span class="job-date"></span><span class="job-location" title="Athens, Greece; Auckland, New Zealand">Multiple</span></li>
+    <li data-posted=""><span class="job-title no-link">Forward Deployed Engineer</span><span class="job-date"></span><span class="job-location" title="Thessaloniki, Greece; Kavala, Greece; Boston, USA; San Francisco, USA">Multiple</span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="http://greensightag.com" target="_blank">GreenSight</a></span>
-    <span class="careers-link"><a href="http://greensightag.com/career/career" target="_blank">careers page</a></span>
-    <span class="job-count">5 roles</span>
+    <a class="company-logo-link" href="https://jobs.lever.co/algorized/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2025/04/ALGORIZED_Logo_Original-5-Megan-Liu.png" alt="Algorized" loading="lazy"></a>
+    <span class="company-name"><a href="https://jobs.lever.co/algorized/" target="_blank">Algorized career page</a></span>
+    <span class="job-count">3 roles</span>
   </div>
+  <p class="company-desc">Algorized leverages proprietary ML algorithms to enable real-time people-sensing, positioning and vital sign detection using UWB radar and wireless sensors. Its AI multimodal platform powers innovative applications across industries, from robotics to automotive.</p>
   <ul class="jobs">
-    <li><a href="http://greensightag.com/job-listings/electromechanical-engineer-jybrid-propulsion" target="_blank">Electromechanical Engineer (Hybrid Propulsion)</a></li>
-    <li><a href="http://greensightag.com/job-listings/mechanical-assembly-technician" target="_blank">Mechanical Assembly Technician</a></li>
-    <li><a href="http://greensightag.com/job-listings/senior-mechanical-engineer" target="_blank">Senior Mechanical Engineer</a></li>
-    <li><a href="http://greensightag.com/job-listings/robotics-technician" target="_blank">Robotics Technician</a></li>
-    <li><a href="http://greensightag.com/job-listings/senior-electrical-engineer" target="_blank">Senior Electrical Engineer</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-09-18"><a class="job-title" href="https://jobs.lever.co/algorized/70911acd-7603-424a-b502-36652f686dd6" target="_blank">Senior Functional Safety Engineer - Robotics</a><span class="job-date">Sep 18, 2026</span><span class="job-location" title="Étoy, Vaud; Campbell, CA (onsite)">Multiple</span></li>
+    <li data-posted="2026-09-18"><a class="job-title" href="https://jobs.lever.co/algorized/04c5e8a3-f51a-47c2-bd5a-06d8ae307874" target="_blank">Senior ML Data Scientist - Wireless People Sensing</a><span class="job-date">Sep 18, 2026</span><span class="job-location" title="Campbell, CA (onsite)">Campbell</span></li>
+    <li data-posted="2026-09-29"><a class="job-title" href="https://jobs.lever.co/algorized/5b574902-a737-427a-b703-f708c09f1001" target="_blank">Senior ML Data Scientist - Wireless People Sensing</a><span class="job-date">Sep 29, 2026</span><span class="job-location" title="Étoy, Vaud (onsite)">Étoy</span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="https://www.haply.co" target="_blank">Haply Robotics</a></span>
-    <span class="careers-link"><a href="https://www.haply.co/careers" target="_blank">careers page</a></span>
+    <a class="company-logo-link" href="https://www.almetra.ai/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2026/08/Almetra-logo-Maximilian-Fischer.png" alt="Almetra" loading="lazy"></a>
+    <span class="company-name"><a href="https://www.almetra.ai/careers" target="_blank">Almetra career page</a></span>
     <span class="job-count">11 roles</span>
   </div>
+  <p class="company-desc">Almetra uses AI-powered cameras to give factories real-time visibility into what’s actually happening on their production lines — connecting that visual data with existing plant systems to show where time, output, or revenue is being lost. Manufacturers use it to spot problems faster and get AI-driven recommendations for fixing them, turning the factory floor into something as measurable and optimizable as a website.</p>
   <ul class="jobs">
-    <li><a href="https://haply.odoo.com/en_CA/jobs/hardware-technician-99" target="_blank">Hardware Technician</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/senior-software-development-manager-86" target="_blank">Senior Software Development Manager</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/manager-of-operations-hr-84" target="_blank">Manager of Operations &amp; HR</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/product-marketing-specialist-87" target="_blank">Product Marketing Specialist</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/senior-software-product-designer-88" target="_blank">Senior Software Product Designer</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/it-and-odoo-specialist-76" target="_blank">IT and Odoo Specialist</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/physical-ai-researcher-85" target="_blank">Physical AI Researcher</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/software-engineer-robotics-platform-rust-73" target="_blank">Software Engineer, Robotics Platform (Rust)</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/senior-front-end-developer-96" target="_blank">Senior Front-End Developer</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/senior-system-engineer-service-sdk-backend-80" target="_blank">Senior System Engineer, Service SDK / Backend</a></li>
-    <li><a href="https://haply.odoo.com/en_CA/jobs/intermediate-front-end-developer-97" target="_blank">Intermediate Front-End Developer</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/8666e2e1-6c18-47d2-8939-c30a907e24c0" target="_blank">EngineeringAI Edge Deployment Engineer</a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
+    <li data-posted="2026-02-01"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/91a0dd55-d1eb-4f2c-a601-5a867d86d0ae" target="_blank">CommercialContinuous Improvement Manager (AI Startup)Berlin€65K - €85KApply</a><span class="job-date">Feb 1, 2026</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2026-01-05"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/8fff5f68-1546-435e-b60e-04af7f253038" target="_blank">EngineeringField Installation Engineer (AI Startup)</a><span class="job-date">Jan 5, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
+    <li data-posted="2025-11-26"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/f62be31f-ffa4-4111-9177-01bbf676ec7c" target="_blank">CommercialManufacturing Solution Engineer (AI Startup)Berlin€65K - €85KApply</a><span class="job-date">Nov 26, 2025</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2026-02-24"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/d0edf3b5-8975-4f6b-8d97-fe88ec40bfe1" target="_blank">EngineeringPlatform Engineer (m/f/d) (AI Startup)Berlin€70K - €85KApply</a><span class="job-date">Feb 24, 2026</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2025-12-29"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/71750eda-f1b5-4332-8c01-d95df3a73a78" target="_blank">CommercialSales Development Representative (AI Startup)Berlin€40K - €50KApply</a><span class="job-date">Dec 29, 2025</span><span class="job-location" title="Berlin; Munich">Multiple</span></li>
+    <li data-posted="2025-05-07"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/5ede6aaa-24e6-4b35-8966-369b052c2b1b" target="_blank">EngineeringSenior Computer Vision Engineer (m/f/d)BerlinNot disclosedApply</a><span class="job-date">May 7, 2025</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2026-09-12"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/b2dbd0d6-1d51-4533-a767-4a86f4ce4b6c" target="_blank">CommercialSenior Manager, Account-Based MarketingBerlinNot disclosedApply</a><span class="job-date">Sep 12, 2026</span><span class="job-location" title="Berlin; Munich">Multiple</span></li>
+    <li data-posted="2026-05-12"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/2907dd40-8412-4bc0-bc55-8c97cf0b84ee" target="_blank">ResearchSenior/Staff Robotics Engineer (m/f/d)</a><span class="job-date">May 12, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
+    <li data-posted="2026-09-24"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/d7851cb9-b5d4-418e-9ab6-f8bd3a8c1956" target="_blank">CommercialTechnical Customer Success Manager (AI Manufacturing Enterprise)BerlinNot disclosedApply</a><span class="job-date">Sep 24, 2026</span><span class="job-location" title="Berlin (remote)">Remote</span></li>
+    <li data-posted="2025-12-18"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/b8351589-c353-401b-ae61-98b2c9c47d30" target="_blank">EngineeringVLM Research Engineer (m/f/d)</a><span class="job-date">Dec 18, 2025</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="https://thehumanoid.ai" target="_blank">Humanoid</a></span>
-    <span class="careers-link"><a href="https://thehumanoid.ai/careers/" target="_blank">careers page</a></span>
-    <span class="job-count">97 roles</span>
+    <a class="company-logo-link" href="https://jobs.gusto.com/boards/bridge-appliances-inc-0f169944-d5cf-43ba-9902-192ce11cb16b" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/12/bridge-primary-logo-green.jpg" alt="Bridge Appliances" loading="lazy"></a>
+    <span class="company-name"><a href="https://jobs.gusto.com/boards/bridge-appliances-inc-0f169944-d5cf-43ba-9902-192ce11cb16b" target="_blank">Bridge Appliances career page</a></span>
+    <span class="job-count">4 roles</span>
   </div>
+  <p class="company-desc">Bridge Appliances is an automated kitchen robotics company making the only end-to-end devices available. By offering cutting-edge robotic appliances that streamline processes, reduce costs, and increase efficiency, we aim to level the playing field and enable businesses of all sizes to thrive.</p>
   <ul class="jobs">
-    <li><a href="https://jobs.ashbyhq.com/humanoid/42ece2fe-54fa-4786-8ecb-95e066be7c32" target="_blank">Autonomy Engineer - VLA Pre-training</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/be9a09e4-768e-474a-a0d9-391b327b0ccf" target="_blank">Deep Learning Engineer - World Models</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/40787896-1d68-4a6b-ba02-a4186c9325d8" target="_blank">Director of Autonomy - Biped</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/8dbbf9a3-4796-45d8-8494-aceaac2c1796" target="_blank">Engineering Lead, Developer Productivity (AI &amp; Agents)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/98faaec2-7d21-40bb-aee6-14b3c0f85502" target="_blank">Firmware Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/efc34974-1fe1-4782-a475-845272c72dae" target="_blank">Full Stack Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/72741997-0fbc-413c-88a8-a273272641d1" target="_blank">Internship - Spatial AI and Navigation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/e1a2a9de-ad23-4632-9d93-ee50fd41a221" target="_blank">Internship, Robot Learning Research</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/92fbd18c-7219-41fe-a8a9-fc3c5ce23c91" target="_blank">Inventory Specialist</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/433fadd1-b71c-4523-a909-8aae4f000c94" target="_blank">Mechanical Design Engineer - Robotic Hand</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/3d85b23e-1b2e-4125-8fe0-e44fb37757f5" target="_blank">Platform Engineer - Build &amp; CI</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/d51c3a27-08c4-469b-9676-ae86728259d7" target="_blank">Principal Product Cybersecurity Assurance Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/adc5c5f7-abbd-4e15-b417-f36c1fca6ff9" target="_blank">Prototype Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/30bff3c1-e69f-4e8d-9c12-8edd6b0b9047" target="_blank">Reinforcement Learning Engineer - Locomanipulation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/4691579b-ff95-4f87-a72d-2fbc37d287fc" target="_blank">Reinforcement Learning Engineer - Manipulation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/0374a4ab-3cfe-4bd8-aef7-bc1edc87621a" target="_blank">Robot Learning Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/fd2e5af4-9583-426c-820c-e968b4a06fec" target="_blank">Robotics Controls Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/790a3b57-19da-4b83-9ab5-2f039e20aaf7" target="_blank">Robotics Test Engineer II</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/ee615697-ad60-424a-a10c-2bea9e4ec44a" target="_blank">Senior Actuator Mechanical Design Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/b093c5ff-bbc8-477f-80de-e48d0bca92c1" target="_blank">Senior Autonomy Engineer - SLAM &amp; Navigation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/294d3f49-7694-40dd-9bcc-732e97237b58" target="_blank">Senior Autonomy Engineer - Spatial Intelligence</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/9ed64980-46e9-44eb-83f7-fded700be4a3" target="_blank">Senior Dev/ML Ops Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/2cbc4de3-0077-4f52-baf8-1f26793adb1c" target="_blank">Senior ECAD Librarian</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/877c176f-7bb7-4443-95bc-121b3b24459e" target="_blank">Senior Electrical Design Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/f8b5f6e7-258c-4220-81f7-f25073bd85d3" target="_blank">Senior Firmware and Embedded Software Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/2aa29ad5-ba32-4356-af31-9af6365696c9" target="_blank">Senior Functional Safety Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/44653df1-6f3b-4ace-a104-24542c87865c" target="_blank">Senior General Mechanical Design Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/80880185-8453-4bcd-9677-9d7c04ac7514" target="_blank">Senior Low-Level Control Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/c08fb643-c84c-4e48-a731-349e7acad6b8" target="_blank">Senior Low-level Control Engineer - End-Effectors</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/654f3a41-dedb-4871-9bd7-cb416b76de2c" target="_blank">Senior Machine Learning Research Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/9d651986-7254-4d63-8c63-9818aae5a48c" target="_blank">Senior Mechanical Design Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/6a790638-b8a2-4d58-b2bd-d520a296803c" target="_blank">Senior Mechanical Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/537a8c12-2743-41d4-ad5f-3887600d4d7d" target="_blank">Senior NPI Mechanical Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/a5ebe067-b4cd-4197-a436-664454cef233" target="_blank">Senior Platform Software Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/4db7f230-5a95-4a3f-96d5-e848ef741f53" target="_blank">Senior Prototype Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/27500243-44fd-4dab-9021-cf8ccc0a2269" target="_blank">Senior Software Controls Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/a1b6e0c7-1d1e-437d-957c-c82146f90bf3" target="_blank">Senior Software Test Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/08e53cbd-9bc8-4d36-8228-2e5fe08ece4e" target="_blank">Senior Staff Software Engineer - Secure Manufacturing</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/7bb7fa2a-5359-48f7-b6cb-71c6e9d67773" target="_blank">Senior Systems Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/2e0c69d4-7ace-432d-baae-5d94dc77cf66" target="_blank">Senior Test &amp; Validation Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/796b413b-ac09-4595-8651-6dab3ab30963" target="_blank">Senior Test and Validation Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/16082aba-861a-4101-84f3-4738dac15d8c" target="_blank">Senior Validation Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/37321a8d-6af6-4b18-9aa9-1be929133065" target="_blank">Senior/Staff Software Engineer - Data Platform</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/2f7c8892-20b9-41e5-a34d-bffa1df349a3" target="_blank">Simulation Engineer - Manipulation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/1927cb7f-3096-472f-9f35-455cad261264" target="_blank">Software Control Teleoperation Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/0604ab87-d57e-4a3f-ae79-d58b84a72d34" target="_blank">Software Engineer - Data &amp; Sensors</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/7d2cedfb-f2e6-4f01-99f8-6385d2d34a5f" target="_blank">Software Engineer - Device Security &amp; Identity</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/187244fb-b576-4e24-93ee-27406b0c1d8b" target="_blank">Software Engineer - Workflow Authoring &amp; Deployment</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/61d2bfba-c25e-4ccd-98ce-7e0961e81b82" target="_blank">Staff AI Engineer - Robot Learning (Navigation)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/0d29a583-4d96-4210-85ac-96da998c67d3" target="_blank">Staff Controls Software Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/c997551f-2678-497a-9c12-aef91f766359" target="_blank">Staff Robotics Control Engineer - Whole-Body Control (Wheeled Platform)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/c3ced2cd-db68-440e-8a66-fb204051efe2" target="_blank">Technical Program Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/a13e930c-3771-4146-b836-c76ad1211361" target="_blank">Technical Program Manager (Hardware)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/4d31f6af-23d8-4de8-88c2-e6f83fe79dd6" target="_blank">VLA Pre-training Engineer - Deep Learning</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/97be853c-df80-4be3-84c6-f0cdcf91d6dc" target="_blank">VP of Industrial Product Engineering</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/1cee32ac-b6eb-4c1f-9c3b-74aeca188a72" target="_blank">Global Inventory &amp; Warehouse Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/f89a4b11-a17a-4cce-8814-f147fa180e58" target="_blank">IT Operations &amp; Cyber Lead</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/dd47ff4b-d5db-4d55-a476-b8d48a93adf3" target="_blank">Robotics Production Team Lead</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/980d191a-adee-4055-a3f0-612d09d81227" target="_blank">Senior Electrical Serviceability Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/01385350-d4ef-404f-94c1-a2b593f67b97" target="_blank">Senior In-House Repair Technician</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/3d890e95-05a1-44b5-b650-a26cd5840951" target="_blank">Senior Manager - Warehouse, Inventory Logistics and Planning</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/b0cc4cb5-d047-4edc-8d2f-3e2c21a9ee2e" target="_blank">Senior Materials Planner</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/35654693-cbd5-46a7-ab8e-a530187512fe" target="_blank">Senior Software Serviceability Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/9c2cf12e-0d99-47f4-ae29-cda882955c8e" target="_blank">Senior Warehouse Operative Specialist</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/c8cde324-9705-4d9c-86b6-721b44143d48" target="_blank">Site Supply Chain Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/86a1fde2-0ed6-4ee9-8e71-1cfbbe4ab7b7" target="_blank">Staff Program Manager - Services Business Process Automation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/ce69d80a-399d-48a5-831c-cee78e9fdd0d" target="_blank">Field Application Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/f90e4699-5edd-49be-9b42-1008be75c2bb" target="_blank">Field Operations Team Lead / Shift Supervisor</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/97be8311-2973-4ef9-bc30-624524f64f18" target="_blank">Product Deployment Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/2cb7f12b-0ec2-4bb6-b973-eb9fa637d00a" target="_blank">Product Program Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/214e05bd-2525-4a22-8847-a3dc5fb507fa" target="_blank">Senior Colour, Materials &amp; Finish  Designer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/fda5e589-d955-4d9d-b731-de0c66decc8e" target="_blank">Staff Field Application Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/e474041d-4b29-45e1-9d63-760802fba36e" target="_blank">Staff Product Deployment Engineer</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/f4f911da-bd3c-49f3-a6b4-5db2c463ed90" target="_blank">Employer Brand &amp; Community Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/8cc1ec58-ff9a-4670-b1da-a2011bced10d" target="_blank">Senior HR Operations Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/a6925005-037b-4d39-8323-071ca3c61c7b" target="_blank">Senior/ Lead Executive Search Recruiter (Robotics, Operations &amp; Manufacturing)</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/6448f5e7-0b56-4de8-970f-9756d2fd2292" target="_blank">Brand Marketing Lead</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/14e434a0-465a-44a7-b8e4-a69bc8e522a2" target="_blank">Personal Brand Lead</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/2a4b61a6-e959-43f6-a3e0-4b4e43748db6" target="_blank">PR Manager - Influencer Relations &amp; Events</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/8800e9f2-04a1-4398-abe1-a87ec939e5fa" target="_blank">Finance Operations Analyst</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/5a4eed85-daa1-4fc4-a487-96c9e16fc64b" target="_blank">Finance Operations Lead</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/30574c23-68e9-4c1b-8e96-037f6aaf2b86" target="_blank">FP&amp;A Lead</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/a0e3784e-8340-4929-8a13-53afd1a084bc" target="_blank">Head of Investor Relations</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/fcde3055-3cef-4194-ad82-42969a1edf95" target="_blank">Head of Strategic Finance</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/d4829366-a249-439b-be54-a56c7376372c" target="_blank">Senior Business Assistant - CFO Office</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/7a8bc969-ad69-4cfe-b0cb-8929ce688be5" target="_blank">Senior Group Accountant</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/ebeee15a-a3f4-48e8-8a35-5c4cb2720b96" target="_blank">Treasury Manager</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/446715c5-6f38-449b-b1d8-af2166b4fa5c" target="_blank">VP, Capital Formation &amp; Strategic Partnerships</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/f463d481-2aa5-422e-bc85-f525b918b16f" target="_blank">VP of AI Transformation</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/0e32672b-86f4-4514-92f0-3ef5f3a0ca6a" target="_blank">VP of Delivery</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/1c2711b5-4286-4c8a-95b6-fd2dfe338f6b" target="_blank">Business Development Specialist</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/eb0505fd-e4a4-443f-ba5d-3751b58c2178" target="_blank">Head of Solutions Engineering</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/2c9a93b4-5b8e-406a-874f-41895f47c966" target="_blank">VP of Partnerships - MENA</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/cdaeb1a1-4ca6-4fb5-a478-2c8950ede37c" target="_blank">VP of Sales</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/35a6c958-6965-4130-9934-e66c94567533" target="_blank">Director &amp; Associate General Counsel - North America</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/9528d281-080c-4586-a5c1-d05a5ddf4081" target="_blank">Director of Contracts &amp; Business Support</a></li>
-    <li><a href="https://jobs.ashbyhq.com/humanoid/b9475cc1-bd0a-40e5-ab78-687a1c51ca04" target="_blank">Director, Government Relations &amp; Public Affairs</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><a class="job-title" href="https://jobs.gusto.com/postings/bridge-appliances-inc-business-development-representative-be2b9bb0-46d2-425f-9187-45ef01cdc274" target="_blank">Business Development Representative</a><span class="job-date"></span><span class="job-location" title="Portsmouth, NH">Portsmouth</span></li>
+    <li data-posted=""><a class="job-title" href="https://jobs.gusto.com/postings/bridge-appliances-inc-field-service-technician-3bc8b5ff-f35d-473b-87d6-17d734520db6" target="_blank">Field Service Technician</a><span class="job-date"></span><span class="job-location" title="New York, NY">New York</span></li>
+    <li data-posted=""><a class="job-title" href="https://jobs.gusto.com/postings/bridge-appliances-inc-production-assembler-70917a81-81e2-4a49-acab-dc6149411508" target="_blank">Production Assembler</a><span class="job-date"></span><span class="job-location" title="Portsmouth, NH">Portsmouth</span></li>
+    <li data-posted=""><a class="job-title" href="https://jobs.gusto.com/postings/bridge-appliances-inc-sales-account-executive-1aba88ae-693e-45b4-ae0b-3e118d55df0a" target="_blank">Sales Account Executive</a><span class="job-date"></span><span class="job-location" title="Sandy Springs, GA">Sandy Springs</span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="https://kineticblocks.com" target="_blank">Kinetic Blocks</a></span>
-    <span class="careers-link"><a href="https://kineticblocks.com/careers" target="_blank">careers page</a></span>
-    <span class="job-count">1 role</span>
-  </div>
-  <ul class="jobs">
-    <li><a href="https://kineticblocks.com/careers/chief-marketing-officer" target="_blank">Chief Marketing Officer</a></li>
-  </ul>
-</div>
-<div class="company">
-  <div class="company-header">
-    <span class="company-name"><a href="http://krakenrobotics.com" target="_blank">Kraken Robotics</a></span>
-    <span class="careers-link"><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/" target="_blank">careers page</a></span>
-    <span class="job-count">12 roles</span>
-  </div>
-  <ul class="jobs">
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/448245b5-9073-4b98-9a46-13a9e7ac1c08" target="_blank">Integrated Business Planning Manager</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/fb37de27-cb23-4773-b2a9-c16d6c950ef0" target="_blank">Project Director (Tiger Team)</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/31e8d894-3574-41ec-9f32-f83ba24529ff" target="_blank">Site General Manager- NS</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/e02b2530-ee40-444a-8fcf-b0be53047b0c" target="_blank">Director, Finance</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/7845eb79-7233-4479-9224-ecff5c849f31" target="_blank">Senior Accountant</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/fc40ea86-6b49-4055-8f93-e105b37b5001" target="_blank">Intermediate Electrical Engineer</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/0b17c068-daee-4f30-9b10-0cd6342a38cb" target="_blank">Intermediate Electrical Technologist</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/f7ef3d7c-1d22-4866-99e6-a237457c7893" target="_blank">Intermediate Mechanical Engineer</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/4f9a9c1b-fb3e-45d7-b13d-53ed66ab3703" target="_blank">Production Technician</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/52cceb32-4b4d-4277-9682-04cb0c976ffe" target="_blank">People &amp; Culture Coordinator</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/af964eac-fbf6-49c0-8a63-fa17695a4714" target="_blank">Quality Control Technician</a></li>
-    <li><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/4cfb72f7-31b7-48d1-8377-0e4781d5b976" target="_blank">Senior Firmware Developer</a></li>
-  </ul>
-</div>
-<div class="company">
-  <div class="company-header">
-    <span class="company-name"><a href="https://www.luminous.solar" target="_blank">Luminous</a></span>
-    <span class="careers-link"><a href="https://www.luminous.solar/career" target="_blank">careers page</a></span>
-    <span class="job-count">7 roles</span>
-  </div>
-  <ul class="jobs">
-    <li><a href="https://www.luminous.solar/vp-of-sales-au" target="_blank">VP of Sales</a></li>
-    <li><a href="https://www.luminous.solar/new-page" target="_blank">Robotics Assembly - Spring 2027</a></li>
-    <li><a href="https://www.luminous.solar/new-page-1" target="_blank">Robotics Field Technician</a></li>
-    <li><a href="https://www.luminous.solar/new-page-2" target="_blank">Software Co-op/Intern, Robotics</a></li>
-    <li><a href="https://www.luminous.solar/new-page-2-1-1" target="_blank">Product Co-op/Intern, Manager &amp; Designer</a></li>
-    <li><a href="https://www.luminous.solar/new-page-2-1" target="_blank">Software Co-op/Intern, Physical AI</a></li>
-    <li><a href="https://www.luminous.solar/new-page-1-1" target="_blank">Deployment Software Engineer</a></li>
-  </ul>
-</div>
-<div class="company">
-  <div class="company-header">
-    <span class="company-name"><a href="https://www.revoluterobotics.com" target="_blank">Revolute Robotics</a></span>
-    <span class="careers-link"><a href="https://revoluterobotics.com/careers" target="_blank">careers page</a></span>
+    <a class="company-logo-link" href="https://ats.rippling.com/cleo-robotics/jobs" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/07/Copy-of-Cleo-Robotics_Green-Logo-1-1500x618.png" alt="Cleo" loading="lazy"></a>
+    <span class="company-name"><a href="https://ats.rippling.com/cleo-robotics/jobs" target="_blank">Cleo career page</a></span>
     <span class="job-count">3 roles</span>
   </div>
+  <p class="company-desc">Cleo Robotics is building the world’s first indoor friendly drone for applications such as law enforcement, surveying, security, and warehousing. Current drones are not suitable for indoor operation because they’re large and dangerous. Cleo solved these problems with their proprietary technology that allowed them to create a new type of drone that is much safer, more compact, and more power efficient.</p>
   <ul class="jobs">
-    <li><a href="https://revoluterobotics.com/head-engineering" target="_blank">Head of Engineering</a></li>
-    <li><a href="https://revoluterobotics.com/control-systems-engineer" target="_blank">Control Systems Engineer</a></li>
-    <li><a href="https://revoluterobotics.com/drone-pilot-integration-engineer" target="_blank">Drone Pilot &amp; Integration Engineer</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://ats.rippling.com/cleo-robotics/jobs/951f41f3-9b0e-4299-935b-057bc8947dd1" target="_blank">Robotics Autonomy Engineer</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="Boston, MA">Boston</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://ats.rippling.com/cleo-robotics/jobs/dc8aa72f-be42-492e-a51a-702a7ac70da0" target="_blank">Robotics Hardware Technician</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="Boston, MA">Boston</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://ats.rippling.com/cleo-robotics/jobs/941a1dd5-ceca-490e-be5d-f7296521f251" target="_blank">Robotics Head of Production</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="Boston, MA">Boston</span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="https://www.riibotics.io" target="_blank">Riibotics</a></span>
-    <span class="careers-link"><a href="https://riibotics.career.greetinghr.com/" target="_blank">careers page</a></span>
-    <span class="job-count">8 roles</span>
+    <a class="company-logo-link" href="https://www.codemetal.ai/company#open-roles" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2024/03/CODE-METAL-LOGO-2026-1500x205.png" alt="Code Metal" loading="lazy"></a>
+    <span class="company-name"><a href="https://www.codemetal.ai/company#open-roles" target="_blank">Code Metal career page</a></span>
+    <span class="job-count">37 roles</span>
   </div>
+  <p class="company-desc">Code Metal revolutionizes software development by autonomously translating high-level research code into production-ready software. Our AI-powered platform accelerates the transition from algorithmic breakthroughs to real-time software that runs at the edge.</p>
   <ul class="jobs">
-    <li><span class="no-link">[경력] FMS System Engineer</span></li>
-    <li><span class="no-link">[전문연구요원] Robot Engineer</span></li>
-    <li><span class="no-link">[경력] Robot Behavior Engineer</span></li>
-    <li><span class="no-link">[경력] Robot Planning &amp; Control Engineer</span></li>
-    <li><span class="no-link">[경력] Robot Platform Engineer</span></li>
-    <li><span class="no-link">[경력] Embedded Control Engineer</span></li>
-    <li><span class="no-link">[경력] Robot Perception Engineer</span></li>
-    <li><span class="no-link">[경력] SLAM Engineer</span></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-09-11"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/260d46b7-1f18-414a-8422-75cb15526eea" target="_blank">Principal Physics Engine Programmer, C++ (Modeling &amp; Simulation)</a><span class="job-date">Sep 11, 2026</span><span class="job-location" title="Remote">Remote</span></li>
+    <li data-posted="2026-09-11"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/92c961bb-4e87-48af-8270-781f05ee8393" target="_blank">Staff Physics Engine Programmer, C++ (Modeling &amp; Simulation)</a><span class="job-date">Sep 11, 2026</span><span class="job-location" title="Remote">Remote</span></li>
+    <li data-posted="2026-09-11"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/b7787423-1800-4f2c-bc01-6966aa08cede" target="_blank">Staff Python Engineer (Modeling &amp; Simulation)</a><span class="job-date">Sep 11, 2026</span><span class="job-location" title="San Francisco Hub; Remote; Boston Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-09-11"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/ae03efea-f053-4067-8a2c-52306a802995" target="_blank">Principal Python Engineer (Modeling &amp; Simulation)</a><span class="job-date">Sep 11, 2026</span><span class="job-location" title="San Francisco Hub; Remote; Boston Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-05-22"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/01251b47-a300-4323-8e6a-05e2487228bb" target="_blank">Senior Platform DevOps Engineer </a><span class="job-date">May 22, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-05-22"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/0666434f-26d9-46b7-a7fe-3260ccc937d8" target="_blank">Senior Python Engineer (Modeling &amp; Simulation)</a><span class="job-date">May 22, 2026</span><span class="job-location" title="San Francisco Hub; Remote; Boston Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-08-24"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/f49423d9-0d76-4fa7-a083-9fa166018e3c" target="_blank">EVP of Enterprise Sales</a><span class="job-date">Aug 24, 2026</span><span class="job-location" title="Remote; San Francisco Hub; Boston Hub">Remote</span></li>
+    <li data-posted="2026-08-24"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/0ec68c93-f625-4d6f-b489-c483550c0158" target="_blank">Forward Deployed Engineer</a><span class="job-date">Aug 24, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-09-09"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/250c5b9b-1be8-457b-97b0-f0ef3d6df469" target="_blank">Vice President of Finance</a><span class="job-date">Sep 9, 2026</span><span class="job-location" title="San Francisco Hub (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-05-22"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/fe3316c3-c5e2-44b3-af49-b920523a1709" target="_blank">Senior Software Engineer (Compiler &amp; AI Tooling)</a><span class="job-date">May 22, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-05-22"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/550aed7b-86d2-48c3-af27-e61671e2d493" target="_blank">Research Engineer - Formal Methods</a><span class="job-date">May 22, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-08-24"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/63ba3ce6-7169-46dc-a0b0-d099131abc7c" target="_blank">Solutions Architect</a><span class="job-date">Aug 24, 2026</span><span class="job-location" title="San Francisco Hub; Remote; Boston Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/92280c18-5263-4c64-8ade-701a983a66b2" target="_blank">Engagement Manager, Defense</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="Remote">Remote</span></li>
+    <li data-posted="2026-08-27"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/f9778fbe-56e9-4000-9e61-09abad05f9dc" target="_blank">Director of Growth - Navy</a><span class="job-date">Aug 27, 2026</span><span class="job-location" title="Washington DC Office; Remote (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-08-27"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/e1c2a095-3219-41be-aa80-d3909244d1a6" target="_blank">Director of Growth - Intelligence Community</a><span class="job-date">Aug 27, 2026</span><span class="job-location" title="Washington DC Office (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-03"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/a6d25a63-446e-4c04-964b-775b6ee9e240" target="_blank">Lead Backend Engineer (Modeling &amp; Simulation)</a><span class="job-date">Oct 3, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub; Washington DC Office (hybrid)">Multiple</span></li>
+    <li data-posted="2026-07-02"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/387734b5-9dfe-4b78-983b-fcd14de10b59" target="_blank">Applied AI Research Engineer</a><span class="job-date">Jul 2, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-08-20"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/8694ee02-6f3c-45c8-9269-3156b3bca92f" target="_blank">Deployment Strategist - USMC</a><span class="job-date">Aug 20, 2026</span><span class="job-location" title="Washington DC Office (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-08-20"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/434acecf-97a6-4882-9023-6ab9d2331f56" target="_blank">Deployment Strategist - SOCOM/CENTCOM</a><span class="job-date">Aug 20, 2026</span><span class="job-location" title="Tampa, FL (remote)">Remote</span></li>
+    <li data-posted="2026-09-29"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/b110301c-5000-4752-bfc8-5bd7cde3cba1" target="_blank">Senior Product Manager (Modeling &amp; Simulation)</a><span class="job-date">Sep 29, 2026</span><span class="job-location" title="Remote; San Francisco Hub; Boston Hub">Remote</span></li>
+    <li data-posted="2026-08-20"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/9b107380-14b9-41b1-93c8-445b24cf22ab" target="_blank">Deployment Strategist - PACOM</a><span class="job-date">Aug 20, 2026</span><span class="job-location" title="Honolulu, HI (remote)">Remote</span></li>
+    <li data-posted="2026-08-24"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/fc471444-dfef-43df-95a8-ad55d3240a2a" target="_blank">Solutions Engineer</a><span class="job-date">Aug 24, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-09-09"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/340da1fb-0098-4c01-99f7-1415237d2f06" target="_blank">Account Executive - Defense</a><span class="job-date">Sep 9, 2026</span><span class="job-location" title="Remote">Remote</span></li>
+    <li data-posted="2026-09-15"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/8913e9bf-7cf5-463c-8c25-c8699e1f0ae5" target="_blank">Senior Hardware Engineer (RTL / High-Level Synthesis)</a><span class="job-date">Sep 15, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub">Remote</span></li>
+    <li data-posted="2026-09-11"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/b12f764d-992f-45dc-95c3-23728c3ce155" target="_blank">Deployment Strategist - SOUTHCOM</a><span class="job-date">Sep 11, 2026</span><span class="job-location" title="Miami, FL (remote)">Remote</span></li>
+    <li data-posted="2026-09-11"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/8ae6e402-8995-4a4b-b876-4e83933c1187" target="_blank">Director, GTM Operations</a><span class="job-date">Sep 11, 2026</span><span class="job-location" title="San Francisco Hub (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-09-15"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/e6ead28d-6828-45a4-8b44-09beba103183" target="_blank">Senior Software Engineer, Code Transpilation</a><span class="job-date">Sep 15, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub">Remote</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/c338b5e8-de7f-4796-bf0c-ebbc4f2536ff" target="_blank">Senior Technical Program Manager</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="San Francisco Hub; Remote; Boston Hub; Washington DC Office (hybrid)">Multiple</span></li>
+    <li data-posted="2026-10-06"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/045cbaea-527b-4b89-ab01-6a64fadeecb6" target="_blank">Staff Software Engineer in Test, Compiler &amp; Systems Validation</a><span class="job-date">Oct 6, 2026</span><span class="job-location" title="San Francisco Hub (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-09-28"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/6d0b5b63-9fd0-4656-8b27-5b018913bf33" target="_blank">Senior Product Manager - Code Translation &amp; Developer Tooling</a><span class="job-date">Sep 28, 2026</span><span class="job-location" title="Remote; San Francisco Hub; Boston Hub">Remote</span></li>
+    <li data-posted="2026-09-28"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/7ac6cf7b-8296-47e7-9a42-742b8b46af76" target="_blank">Account Executive, Financial Services</a><span class="job-date">Sep 28, 2026</span><span class="job-location" title="San Francisco Hub; Remote; Boston Hub; Washington DC Office (hybrid)">Multiple</span></li>
+    <li data-posted="2026-09-29"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/4f6125f4-1484-4149-81e3-6a7595a75f42" target="_blank">People Operations Generalist</a><span class="job-date">Sep 29, 2026</span><span class="job-location" title="San Francisco Hub; Boston Hub (hybrid)">Multiple</span></li>
+    <li data-posted="2026-10-06"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/d940836d-3c14-4ac4-a16b-e0d690320f99" target="_blank">Staff AI Platform Engineer</a><span class="job-date">Oct 6, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub; Washington DC Office (hybrid)">Multiple</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/a3aacda4-c920-44e3-b609-af7bde574704" target="_blank">Director of Growth - USMC</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Washington DC Office; Remote (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/a6acbbd8-4c73-48db-8780-cd3abf886c16" target="_blank">Proposal Coordinator</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Remote; San Francisco Hub; Boston Hub; Washington DC Office">Remote</span></li>
+    <li data-posted="2026-10-09"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/108e4472-03d2-44dd-8d5c-78c075036b2d" target="_blank">Senior AI Platform Engineer</a><span class="job-date">Oct 9, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub; Washington DC Office (hybrid)">Multiple</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/3d0c7ce7-b5ce-4b2d-842e-7f2017d2dc8d" target="_blank">Staff Software Engineer in Test (Modeling and Simulation)</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="San Francisco Hub (hybrid)">Hybrid</span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="https://sereact.ai" target="_blank">sereact</a></span>
-    <span class="careers-link"><a href="https://sereact.ai/careers" target="_blank">careers page</a></span>
+    <a class="company-logo-link" href="https://flexxbotics.com/careers/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/08/Flexxbotics_Logo-BColorX-RGB-1500x455.png" alt="Flexxbotics" loading="lazy"></a>
+    <span class="company-name"><a href="https://flexxbotics.com/careers/" target="_blank">Flexxbotics career page</a></span>
+    <span class="job-count">5 roles</span>
+  </div>
+  <p class="company-desc">Flexxbotics enables robot-driven manufacturing at scale. Flexxbotics solution digitalizes robotic production with autonomous process control for next generation smart factory autonomy. Flexxbotics breakthrough, the unique FlexxCORE™ technology, seamlessly connects and coordinates robots with existing automation equipment, IT systems and people. More powerful, flexible and open, Flexxbotics revolutionizes the use of robotics in complex production.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><a class="job-title" href="https://flexxbotics.com/careers/account-executive/" target="_blank">Account Executive</a><span class="job-date"></span><span class="job-location" title="Boston, MA (Remote considered)">Hybrid</span></li>
+    <li data-posted=""><a class="job-title" href="https://flexxbotics.com/careers/senior-automation-interfacing-software-engineer/" target="_blank">Senior Automation Interfacing Software Engineer</a><span class="job-date"></span><span class="job-location" title="Boston, MA (onsite)">Boston</span></li>
+    <li data-posted=""><a class="job-title" href="https://flexxbotics.com/careers/software-engineer/" target="_blank">Software Engineer</a><span class="job-date"></span><span class="job-location" title="Boston, MA">Boston</span></li>
+    <li data-posted=""><a class="job-title" href="https://flexxbotics.com/careers/robotics-and-interfacing-engineer/" target="_blank">Robotics and Interfacing Engineer</a><span class="job-date"></span><span class="job-location" title="Boston, MA (onsite)">Boston</span></li>
+    <li data-posted=""><a class="job-title" href="https://flexxbotics.com/careers/sales-development-representative/" target="_blank">Sales Development Representative</a><span class="job-date"></span><span class="job-location" title="Boston, MA (Remote Considered)">Hybrid</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://jobs.gusto.com/boards/glidance-inc-04116ff7-bba9-4edd-a1c1-bc4cb9b71f56" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/08/glidance-logo.jpg" alt="Glidance" loading="lazy"></a>
+    <span class="company-name"><a href="https://jobs.gusto.com/boards/glidance-inc-04116ff7-bba9-4edd-a1c1-bc4cb9b71f56" target="_blank">Glidance career page</a></span>
+    <span class="job-count">3 roles</span>
+  </div>
+  <p class="company-desc">We are addressing a huge gap in the market for a new mobility aid for people with sight loss with Glide, the world’s first autonomous guide. Easy to learn and use, with a design that empowers confidence and pride, Glide will empower millions of people with a new sense of autonomy and independence in their lives.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><a class="job-title" href="https://jobs.gusto.com/postings/glidance-inc-glide-o-m-trainer-17446fab-be4a-4df7-9255-2561c65f12a0" target="_blank">Glide O&amp;M Trainer</a><span class="job-date"></span><span class="job-location" title="Remote">Remote</span></li>
+    <li data-posted=""><a class="job-title" href="https://jobs.gusto.com/postings/glidance-inc-head-of-embodied-intelligence-b3de611a-1a1c-4093-b69c-602c381446f6" target="_blank">Head of Embodied Intelligence</a><span class="job-date"></span><span class="job-location" title="Seattle, WA">Seattle</span></li>
+    <li data-posted=""><a class="job-title" href="https://jobs.gusto.com/postings/glidance-inc-robotics-research-engineer-embodied-intelligence-1151c57a-7361-49ed-99c9-bdc2a4e16c3a" target="_blank">Robotics Research Engineer – Embodied Intelligence</a><span class="job-date"></span><span class="job-location" title="Seattle, WA">Seattle</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="http://greensightag.com/career/career" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/08/greensight-resize.png" alt="GreenSight" loading="lazy"></a>
+    <span class="company-name"><a href="http://greensightag.com/career/career" target="_blank">GreenSight career page</a></span>
+    <span class="job-count">5 roles</span>
+  </div>
+  <p class="company-desc">GreenSight is a dynamic, funded startup developing fully automated drone systems and a wide variety of related hardware and software. They offer commercial drone-based services of golf courses, vineyards, and other commercial customers. They also develop highly advanced technical solutions built around autonomous vehicles and AI software for both commercial and US government customers.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-09-14"><a class="job-title" href="http://greensightag.com/job-listings/electromechanical-engineer-jybrid-propulsion" target="_blank">Electromechanical Engineer (Hybrid Propulsion)</a><span class="job-date">Sep 14, 2026</span><span class="job-location" title="Charlestown, MA (HQ)">Charlestown</span></li>
+    <li data-posted="2026-09-01"><a class="job-title" href="http://greensightag.com/job-listings/mechanical-assembly-technician" target="_blank">Mechanical Assembly Technician</a><span class="job-date">Sep 1, 2026</span><span class="job-location" title="529 Main St, Boston MA">Boston</span></li>
+    <li data-posted="2026-08-25"><a class="job-title" href="http://greensightag.com/job-listings/senior-mechanical-engineer" target="_blank">Senior Mechanical Engineer</a><span class="job-date">Aug 25, 2026</span><span class="job-location" title="Boston, MA">Boston</span></li>
+    <li data-posted="2026-03-11"><a class="job-title" href="http://greensightag.com/job-listings/robotics-technician" target="_blank">Robotics Technician</a><span class="job-date">Mar 11, 2026</span><span class="job-location" title="Boston, MA">Boston</span></li>
+    <li data-posted="2025-11-05"><a class="job-title" href="http://greensightag.com/job-listings/senior-electrical-engineer" target="_blank">Senior Electrical Engineer</a><span class="job-date">Nov 5, 2025</span><span class="job-location" title="Boston, MA">Boston</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://www.haply.co/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/08/Haply-Primary-Logo-Black-no-BG-RGB-1500x500.png" alt="Haply Robotics" loading="lazy"></a>
+    <span class="company-name"><a href="https://www.haply.co/careers" target="_blank">Haply Robotics career page</a></span>
+    <span class="job-count">10 roles</span>
+  </div>
+  <p class="company-desc">Haply Robotics is a team of experts in the fields of robotics, engineering, and haptic technology working together to research, design, and build innovative haptic robotic products. Haply Robotics designs and manufactures the inverse3, a precision 3D mouse capable of providing precise touch feedback down to the millinewton scale. This touch-enabled mouse can be used in the field of design to empower artists, engineers, architects, and game designers to create more realistic 3D content in the emerging 3D digital world.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-10-01"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/hardware-technician-99" target="_blank">Hardware Technician</a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-10-19"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/office-manager-100" target="_blank">Office Manager</a><span class="job-date">Oct 19, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-09-01"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/senior-software-development-manager-86" target="_blank">Senior Software Development Manager</a><span class="job-date">Sep 1, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-08-11"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/manager-of-operations-hr-84" target="_blank">Manager of Operations &amp; HR</a><span class="job-date">Aug 11, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-09-10"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/intermediate-front-end-developer-97" target="_blank">Intermediate Front-End Developer</a><span class="job-date">Sep 10, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-09-10"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/senior-system-engineer-service-sdk-backend-80" target="_blank">Senior System Engineer, Service SDK / Backend</a><span class="job-date">Sep 10, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-09-01"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/product-marketing-specialist-87" target="_blank">Product Marketing Specialist</a><span class="job-date">Sep 1, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-08-28"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/senior-software-product-designer-88" target="_blank">Senior Software Product Designer</a><span class="job-date">Aug 28, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-05-05"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/it-and-odoo-specialist-76" target="_blank">IT and Odoo Specialist</a><span class="job-date">May 5, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+    <li data-posted="2026-08-12"><a class="job-title" href="https://haply.odoo.com/en_CA/jobs/physical-ai-researcher-85" target="_blank">Physical AI Researcher</a><span class="job-date">Aug 12, 2026</span><span class="job-location" title="Montréal">Montréal</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://thehumanoid.ai/careers/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2025/10/logo_default-Colin-McCormick.png" alt="Humanoid" loading="lazy"></a>
+    <span class="company-name"><a href="https://thehumanoid.ai/careers/" target="_blank">Humanoid career page</a></span>
+    <span class="job-count">99 roles</span>
+  </div>
+  <p class="company-desc">Empowering humanity by building the most reliable, safe, and helpful humanoid robots. We strategically focus on labor-intensive operations that current automation technologies cannot effectively address by developing a general-purpose humanoid robot.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-04-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/9ed64980-46e9-44eb-83f7-fded700be4a3" target="_blank">Senior Dev/ML Ops Engineer</a><span class="job-date">Apr 16, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-04-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/654f3a41-dedb-4871-9bd7-cb416b76de2c" target="_blank">Robotics Simulation &amp; RL Engineer</a><span class="job-date">Apr 16, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-04-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/1927cb7f-3096-472f-9f35-455cad261264" target="_blank">Software Control Teleoperation Engineer</a><span class="job-date">Apr 16, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-04-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/0d29a583-4d96-4210-85ac-96da998c67d3" target="_blank">Staff Controls Software Engineer</a><span class="job-date">Apr 16, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-09"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/40787896-1d68-4a6b-ba02-a4186c9325d8" target="_blank"> Director of Autonomy - Biped</a><span class="job-date">Oct 9, 2026</span><span class="job-location" title="US, San Diego, CA (onsite)">San Diego</span></li>
+    <li data-posted="2026-10-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/5a4eed85-daa1-4fc4-a487-96c9e16fc64b" target="_blank">Finance Operations Lead</a><span class="job-date">Oct 16, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/ee615697-ad60-424a-a10c-2bea9e4ec44a" target="_blank">Senior Actuator Mechanical Design Engineer</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/42ece2fe-54fa-4786-8ecb-95e066be7c32" target="_blank">Autonomy Engineer - VLA Pre-training </a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="US, San Diego, CA (onsite)">San Diego</span></li>
+    <li data-posted="2026-04-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/9d651986-7254-4d63-8c63-9818aae5a48c" target="_blank">Senior Mechanical Design Engineer</a><span class="job-date">Apr 17, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-07-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/be9a09e4-768e-474a-a0d9-391b327b0ccf" target="_blank">Deep Learning Engineer - World Models</a><span class="job-date">Jul 16, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/be29f7b7-3c56-4d8c-991a-bf0bfdd5a060" target="_blank">Senior Electrical Design Engineer</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-09-04"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/0e32672b-86f4-4514-92f0-3ef5f3a0ca6a" target="_blank">VP of Delivery</a><span class="job-date">Sep 4, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/2e0c69d4-7ace-432d-baae-5d94dc77cf66" target="_blank">Senior Test  and Validation Engineer</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-07-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/4691579b-ff95-4f87-a72d-2fbc37d287fc" target="_blank">Reinforcement Learning Engineer - Manipulation</a><span class="job-date">Jul 16, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/30bff3c1-e69f-4e8d-9c12-8edd6b0b9047" target="_blank">Reinforcement Learning Engineer - Locomanipulation</a><span class="job-date">Aug 13, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-04-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/2f7c8892-20b9-41e5-a34d-bffa1df349a3" target="_blank">Simulation Engineer - Manipulation</a><span class="job-date">Apr 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-04-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/0374a4ab-3cfe-4bd8-aef7-bc1edc87621a" target="_blank">Robot Learning Engineer</a><span class="job-date">Apr 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-04-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/bf4c34c3-541d-4497-8aa3-9fae8f82e396" target="_blank">Senior Platform Software Engineer</a><span class="job-date">Apr 17, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-04-30"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/dd47ff4b-d5db-4d55-a476-b8d48a93adf3" target="_blank">Robotics Production Team Lead</a><span class="job-date">Apr 30, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-27"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/16082aba-861a-4101-84f3-4738dac15d8c" target="_blank">Senior Validation Engineer </a><span class="job-date">Aug 27, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-05-15"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/a1b6e0c7-1d1e-437d-957c-c82146f90bf3" target="_blank">Senior Software Test Engineer</a><span class="job-date">May 15, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-05-15"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/796b413b-ac09-4595-8651-6dab3ab30963" target="_blank">Senior Test and Validation Engineer</a><span class="job-date">May 15, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-05-15"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/790a3b57-19da-4b83-9ab5-2f039e20aaf7" target="_blank">Robotics Test Engineer II</a><span class="job-date">May 15, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-05-20"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/08e53cbd-9bc8-4d36-8228-2e5fe08ece4e" target="_blank">Senior Staff Software Engineer - Secure Manufacturing</a><span class="job-date">May 20, 2026</span><span class="job-location" title="US, San Diego, CA (onsite)">San Diego</span></li>
+    <li data-posted="2026-06-05"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/b093c5ff-bbc8-477f-80de-e48d0bca92c1" target="_blank">Senior Autonomy Engineer - SLAM &amp; Navigation</a><span class="job-date">Jun 5, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-06-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/0604ab87-d57e-4a3f-ae79-d58b84a72d34" target="_blank">Software Engineer - Data &amp; Sensors</a><span class="job-date">Jun 12, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-06-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/187244fb-b576-4e24-93ee-27406b0c1d8b" target="_blank">Software Engineer - Workflow Authoring &amp; Deployment</a><span class="job-date">Jun 12, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/44653df1-6f3b-4ace-a104-24542c87865c" target="_blank">Senior General Mechanical Design Engineer</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-06-25"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/97be853c-df80-4be3-84c6-f0cdcf91d6dc" target="_blank">VP of Industrial Product Engineering</a><span class="job-date">Jun 25, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-26"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/9528d281-080c-4586-a5c1-d05a5ddf4081" target="_blank">Director, Contracts &amp; Business Support</a><span class="job-date">Oct 26, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/2c9a93b4-5b8e-406a-874f-41895f47c966" target="_blank">VP of Partnerships - MENA</a><span class="job-date">Jul 13, 2026</span><span class="job-location" title="UK, London; Global (Remote)">Remote</span></li>
+    <li data-posted="2026-07-02"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/d51c3a27-08c4-469b-9676-ae86728259d7" target="_blank">Principal Product Cybersecurity Assurance Engineer</a><span class="job-date">Jul 2, 2026</span><span class="job-location" title="UK, London; US, Boston, MA (onsite)">Multiple</span></li>
+    <li data-posted="2026-07-03"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/7d2cedfb-f2e6-4f01-99f8-6385d2d34a5f" target="_blank">Software Engineer - Device Security &amp; Identity</a><span class="job-date">Jul 3, 2026</span><span class="job-location" title="US, San Diego, CA (onsite)">San Diego</span></li>
+    <li data-posted="2026-10-01"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/f463d481-2aa5-422e-bc85-f525b918b16f" target="_blank">VP of AI Transformation</a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/37321a8d-6af6-4b18-9aa9-1be929133065" target="_blank">Senior/Staff Software Engineer - Data Platform</a><span class="job-date">Jul 10, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-20"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/fda5e589-d955-4d9d-b731-de0c66decc8e" target="_blank">Lead Field Application Engineer</a><span class="job-date">Aug 20, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-07-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/01385350-d4ef-404f-94c1-a2b593f67b97" target="_blank">Senior In-House Repair Technician</a><span class="job-date">Jul 10, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/86a1fde2-0ed6-4ee9-8e71-1cfbbe4ab7b7" target="_blank">Staff Program Manager - Services Business Process Automation</a><span class="job-date">Jul 10, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/4b498bba-e364-428e-8849-8a3db341a42b" target="_blank">Mechatronics Remote Support Engineer</a><span class="job-date">Jul 10, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/980d191a-adee-4055-a3f0-612d09d81227" target="_blank">Senior Electrical Serviceability Engineer</a><span class="job-date">Jul 10, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/35654693-cbd5-46a7-ab8e-a530187512fe" target="_blank">Senior Software Serviceability Engineer</a><span class="job-date">Jul 10, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/14e434a0-465a-44a7-b8e4-a69bc8e522a2" target="_blank">Personal Brand Lead</a><span class="job-date">Jul 13, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-16"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/4d31f6af-23d8-4de8-88c2-e6f83fe79dd6" target="_blank">VLA Pre-training Engineer - Deep Learning</a><span class="job-date">Jul 16, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-28"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/bf934759-4815-4f64-bc8f-1b51879bb3fe" target="_blank">HR Business Partner</a><span class="job-date">Jul 28, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-07-24"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/2aa29ad5-ba32-4356-af31-9af6365696c9" target="_blank">Senior Functional Safety Engineer</a><span class="job-date">Jul 24, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-09-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/80880185-8453-4bcd-9677-9d7c04ac7514" target="_blank">Senior Low-Level Control Engineer</a><span class="job-date">Sep 10, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-08-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/e474041d-4b29-45e1-9d63-760802fba36e" target="_blank">Lead Product Deployment Engineer</a><span class="job-date">Aug 10, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-08-23"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/c997551f-2678-497a-9c12-aef91f766359" target="_blank">Staff Robotics Control Engineer - Whole-Body Control (Wheeled Platform)</a><span class="job-date">Aug 23, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-23"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/c08fb643-c84c-4e48-a731-349e7acad6b8" target="_blank">Senior Low-level Control Engineer - End-Effectors</a><span class="job-date">Aug 23, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/2a4b61a6-e959-43f6-a3e0-4b4e43748db6" target="_blank">PR Manager - Influencer Relations &amp; Events</a><span class="job-date">Aug 12, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/7bb7fa2a-5359-48f7-b6cb-71c6e9d67773" target="_blank">Senior Systems Engineer</a><span class="job-date">Aug 13, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/2cb7f12b-0ec2-4bb6-b973-eb9fa637d00a" target="_blank">Product Program Manager</a><span class="job-date">Aug 13, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/f89a4b11-a17a-4cce-8814-f147fa180e58" target="_blank">IT Operations &amp; Cyber Lead</a><span class="job-date">Aug 13, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/4db7f230-5a95-4a3f-96d5-e848ef741f53" target="_blank">Senior Prototype Engineer</a><span class="job-date">Aug 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/98faaec2-7d21-40bb-aee6-14b3c0f85502" target="_blank">Firmware Engineer</a><span class="job-date">Aug 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-19"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/27500243-44fd-4dab-9021-cf8ccc0a2269" target="_blank">Senior Software Controls Engineer</a><span class="job-date">Aug 19, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-21"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/2cbc4de3-0077-4f52-baf8-1f26793adb1c" target="_blank">Senior ECAD Librarian</a><span class="job-date">Aug 21, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/f8b5f6e7-258c-4220-81f7-f25073bd85d3" target="_blank">Senior Firmware and Embedded Software Engineer</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/c3ced2cd-db68-440e-8a66-fb204051efe2" target="_blank">Technical Program Manager</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-21"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/a13e930c-3771-4146-b836-c76ad1211361" target="_blank">Technical Program Manager (Hardware)</a><span class="job-date">Aug 21, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-08-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/adc5c5f7-abbd-4e15-b417-f36c1fca6ff9" target="_blank">Prototype Engineer</a><span class="job-date">Aug 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/6a790638-b8a2-4d58-b2bd-d520a296803c" target="_blank">Senior Mechanical Engineer</a><span class="job-date">Aug 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-20"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/1ecf0cb4-b1cd-4b7b-babd-86cd36e39da6" target="_blank">Compensation &amp; Benefits Specialist</a><span class="job-date">Aug 20, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-08-21"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/fd2e5af4-9583-426c-820c-e968b4a06fec" target="_blank">Robotics Controls Engineer</a><span class="job-date">Aug 21, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-08-25"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8cc1ec58-ff9a-4670-b1da-a2011bced10d" target="_blank">Senior HR Operations Manager</a><span class="job-date">Aug 25, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-02"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/ad93cc97-6286-4358-9513-11d651541f43" target="_blank">Buyer - Directs (Contract)</a><span class="job-date">Sep 2, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/7a8bc969-ad69-4cfe-b0cb-8929ce688be5" target="_blank">Senior Group Accountant </a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/a0e3784e-8340-4929-8a13-53afd1a084bc" target="_blank">Head of Investor Relations </a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8800e9f2-04a1-4398-abe1-a87ec939e5fa" target="_blank">Finance Operations Analyst</a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/cdaeb1a1-4ca6-4fb5-a478-2c8950ede37c" target="_blank">VP of Sales</a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-23"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/b9475cc1-bd0a-40e5-ab78-687a1c51ca04" target="_blank">Director, Government Relations &amp; Public Affairs</a><span class="job-date">Sep 23, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-08"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/5570dc3e-63cd-44f4-8ff2-b6979c25e868" target="_blank">AI Data Collector </a><span class="job-date">Sep 8, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/d4829366-a249-439b-be54-a56c7376372c" target="_blank">Senior Business Assistant - CFO Office</a><span class="job-date">Oct 12, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-10"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/537a8c12-2743-41d4-ad5f-3887600d4d7d" target="_blank">Senior NPI Mechanical Engineer</a><span class="job-date">Sep 10, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8dbbf9a3-4796-45d8-8494-aceaac2c1796" target="_blank">Engineering Lead, Developer Productivity (AI &amp; Agents)</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/294d3f49-7694-40dd-9bcc-732e97237b58" target="_blank">Senior Autonomy Engineer - Spatial Intelligence</a><span class="job-date">Sep 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-25"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/6f499ea5-93cf-44cb-a820-21a2c49c818b" target="_blank">Principal Product Cybersecurity Assurance Engineer</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/c234c345-4481-421e-a410-a701e1bed42d" target="_blank">Lead Prototype Engineer</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-28"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/f90e4699-5edd-49be-9b42-1008be75c2bb" target="_blank">Field Operations Team Lead / Shift Supervisor</a><span class="job-date">Oct 28, 2026</span><span class="job-location" title="Germany">Germany</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/433fadd1-b71c-4523-a909-8aae4f000c94" target="_blank">Mechanical Design Engineer - Robotic Hand</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-09-25"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/4492b9f9-0dfd-46ca-94ef-10503f096c99" target="_blank">AI Data Collector - Night Shift</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-09-29"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/35a6c958-6965-4130-9934-e66c94567533" target="_blank">Director &amp; Associate General Counsel - North America</a><span class="job-date">Sep 29, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/a6925005-037b-4d39-8323-071ca3c61c7b" target="_blank">Senior/ Lead Executive Search Recruiter (Robotics, Operations &amp; Manufacturing)</a><span class="job-date">Oct 12, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-01"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8770d37c-6570-4531-9d6a-59c47a4c1bbe" target="_blank">VP of Sales </a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-01"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/25162c54-493a-456c-840c-9d5f9417017e" target="_blank">VP of Sales</a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="US (Remote); US, San Diego, CA">Remote</span></li>
+    <li data-posted="2026-10-06"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/6dbb1c4d-7d75-48ea-9c8d-0a8d7a232610" target="_blank">HR Manager</a><span class="job-date">Oct 6, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/214e05bd-2525-4a22-8847-a3dc5fb507fa" target="_blank">Senior Colour, Materials &amp; Finish  Designer</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/9c2cf12e-0d99-47f4-ae29-cda882955c8e" target="_blank">Warehouse Operative Specialist</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-10-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/fcde3055-3cef-4194-ad82-42969a1edf95" target="_blank">Head of Strategic Finance</a><span class="job-date">Oct 12, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/1c2711b5-4286-4c8a-95b6-fd2dfe338f6b" target="_blank">Business Development Specialist</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/446715c5-6f38-449b-b1d8-af2166b4fa5c" target="_blank">VP, Capital Formation &amp; Strategic Partnerships</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="US (Remote)">Remote</span></li>
+    <li data-posted="2026-10-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/eb0505fd-e4a4-443f-ba5d-3751b58c2178" target="_blank">Head of Solutions Engineering</a><span class="job-date">Oct 12, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/b164c603-66df-468d-a38f-529d6d71efa9" target="_blank">Chief Scientist</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/c7d2acfc-35ba-4018-bfc6-25af1fb7683e" target="_blank">Prototype Engineer</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/92fbd18c-7219-41fe-a8a9-fc3c5ce23c91" target="_blank">Inventory/Warehouse Specialist</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/1a74a54c-6a8b-41bd-b302-733d4f7b0e07" target="_blank">Senior Deep Learning Engineer, Whole-Body Control</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-21"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8d34a206-156d-4c29-a14b-c124fb3f11eb" target="_blank">Head of Workplace &amp; Facilities</a><span class="job-date">Oct 21, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/a464dfbe-50c6-4194-893a-8a01241e992c" target="_blank">Cloud Infrastructure Engineer</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-26"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/07e8a5a4-dc80-497d-9c8b-e4386a5fc75d" target="_blank">Senior Prototype Engineer</a><span class="job-date">Oct 26, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://kineticblocks.com/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2026/10/Kinetic-Blocks-Leo-Terry-1500x700.png" alt="Kinetic Blocks" loading="lazy"></a>
+    <span class="company-name"><a href="https://kineticblocks.com/careers" target="_blank">Kinetic Blocks career page</a></span>
+    <span class="job-count">1 role</span>
+  </div>
+  <p class="company-desc">Kinetic Blocks is a marketplace for commercially licensed, provenance-tracked robot training data, from egocentric human video and teleoperation recordings to robot execution data. Every dataset is quality-scored before it is listed and delivered in LeRobot format with chain-of-custody documentation.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-10-01"><a class="job-title" href="https://kineticblocks.com/careers/chief-marketing-officer" target="_blank">Chief Marketing Officer</a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="San Francisco, CA">San Francisco</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://ats.rippling.com/kraken-robotics-inc/jobs/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2022/09/Untitled-design-2022-09-12T094714.502.png" alt="Kraken Robotics" loading="lazy"></a>
+    <span class="company-name"><a href="https://ats.rippling.com/kraken-robotics-inc/jobs/" target="_blank">Kraken Robotics career page</a></span>
+    <span class="job-count">29 roles</span>
+  </div>
+  <p class="company-desc">Kraken Robotics US Inc is a marine technology company engaged in the design, development and marketing of advanced sensors, software and underwater robotics for unmanned maritime vehicles used in military and commercial applications.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-09-22"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/3c421826-aff1-41de-bca9-c10295d91b8d" target="_blank">Cybersecurity Specialist</a><span class="job-date">Sep 22, 2026</span><span class="job-location" title="Longmont, CO">Longmont</span></li>
+    <li data-posted="2026-09-22"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/3c421826-aff1-41de-bca9-c10295d91b8d" target="_blank">Cybersecurity Specialist</a><span class="job-date">Sep 22, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-09-22"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/3c421826-aff1-41de-bca9-c10295d91b8d" target="_blank">Cybersecurity Specialist</a><span class="job-date">Sep 22, 2026</span><span class="job-location" title="Mount Pearl, Canada">Mount Pearl</span></li>
+    <li data-posted="2026-09-22"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/3c421826-aff1-41de-bca9-c10295d91b8d" target="_blank">Cybersecurity Specialist</a><span class="job-date">Sep 22, 2026</span><span class="job-location" title="Houston, TX">Houston</span></li>
+    <li data-posted="2026-09-14"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/e02b2530-ee40-444a-8fcf-b0be53047b0c" target="_blank">Director, Finance</a><span class="job-date">Sep 14, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-08-18"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/47c4c6af-3146-498d-823c-6fe12ae32360" target="_blank">Executive Assistant</a><span class="job-date">Aug 18, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-09-25"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/448245b5-9073-4b98-9a46-13a9e7ac1c08" target="_blank">Integrated Business Planning Manager</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="Westhill, United Kingdom">Westhill</span></li>
+    <li data-posted="2026-09-25"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/448245b5-9073-4b98-9a46-13a9e7ac1c08" target="_blank">Integrated Business Planning Manager</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="Yateley, United Kingdom">Yateley</span></li>
+    <li data-posted="2026-09-25"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/448245b5-9073-4b98-9a46-13a9e7ac1c08" target="_blank">Integrated Business Planning Manager</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-09-25"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/448245b5-9073-4b98-9a46-13a9e7ac1c08" target="_blank">Integrated Business Planning Manager</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="Kobenhavn, Denmark">Kobenhavn</span></li>
+    <li data-posted="2026-09-25"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/448245b5-9073-4b98-9a46-13a9e7ac1c08" target="_blank">Integrated Business Planning Manager</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="Mount Pearl, Canada">Mount Pearl</span></li>
+    <li data-posted="2026-09-11"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/7970fa54-c507-49a4-8af3-6a4890a9097b" target="_blank">Intermediate Electrical Engineer</a><span class="job-date">Sep 11, 2026</span><span class="job-location" title="Mount Pearl, Canada">Mount Pearl</span></li>
+    <li data-posted="2026-06-11"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/0b17c068-daee-4f30-9b10-0cd6342a38cb" target="_blank">Intermediate Electrical Technologist</a><span class="job-date">Jun 11, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-06-10"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/f7ef3d7c-1d22-4866-99e6-a237457c7893" target="_blank">Intermediate Mechanical Engineer</a><span class="job-date">Jun 10, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-10-26"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/516ee08a-c79b-4c18-9cf3-fc7698a50c56" target="_blank">Inventory &amp; Logistics Coordinator</a><span class="job-date">Oct 26, 2026</span><span class="job-location" title="Rostock, Germany">Rostock</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/186ea5ec-85b3-4497-bd2f-7510c7bdb882" target="_blank">IT Support Specialist, Tier 2</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="Houston, TX">Houston</span></li>
+    <li data-posted="2026-10-07"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/52cceb32-4b4d-4277-9682-04cb0c976ffe" target="_blank">People &amp; Culture Coordinator</a><span class="job-date">Oct 7, 2026</span><span class="job-location" title="Yateley, United Kingdom">Yateley</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/fb37de27-cb23-4773-b2a9-c16d6c950ef0" target="_blank">Project Director (Tiger Team)</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="Mount Pearl, Canada">Mount Pearl</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/fb37de27-cb23-4773-b2a9-c16d6c950ef0" target="_blank">Project Director (Tiger Team)</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="Skanderborg, Denmark">Skanderborg</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/fb37de27-cb23-4773-b2a9-c16d6c950ef0" target="_blank">Project Director (Tiger Team)</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="Yateley, United Kingdom">Yateley</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/fb37de27-cb23-4773-b2a9-c16d6c950ef0" target="_blank">Project Director (Tiger Team)</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-09-09"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/af964eac-fbf6-49c0-8a63-fa17695a4714" target="_blank">Quality Control Technician</a><span class="job-date">Sep 9, 2026</span><span class="job-location" title="Rostock, Germany">Rostock</span></li>
+    <li data-posted="2026-06-10"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/fc40ea86-6b49-4055-8f93-e105b37b5001" target="_blank">Senior Electrical Engineer</a><span class="job-date">Jun 10, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-10-21"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/580dd579-d51f-481a-9ebb-135df324a0cc" target="_blank">Senior Electrical Engineering Student</a><span class="job-date">Oct 21, 2026</span><span class="job-location" title="Mount Pearl, Canada">Mount Pearl</span></li>
+    <li data-posted="2026-01-14"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/4cfb72f7-31b7-48d1-8377-0e4781d5b976" target="_blank">Senior Firmware Developer</a><span class="job-date">Jan 14, 2026</span><span class="job-location" title="Mount Pearl, Canada">Mount Pearl</span></li>
+    <li data-posted="2026-01-14"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/4cfb72f7-31b7-48d1-8377-0e4781d5b976" target="_blank">Senior Firmware Developer</a><span class="job-date">Jan 14, 2026</span><span class="job-location" title="Canada - Remote">Remote</span></li>
+    <li data-posted="2026-01-14"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/4cfb72f7-31b7-48d1-8377-0e4781d5b976" target="_blank">Senior Firmware Developer</a><span class="job-date">Jan 14, 2026</span><span class="job-location" title="Canada - Nova Scotia">Canada - Nova Scotia</span></li>
+    <li data-posted="2026-09-23"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/31e8d894-3574-41ec-9f32-f83ba24529ff" target="_blank">Site General Manager- NS</a><span class="job-date">Sep 23, 2026</span><span class="job-location" title="Dartmouth, Canada">Dartmouth</span></li>
+    <li data-posted="2026-03-16"><a class="job-title" href="https://ats.rippling.com/kraken-robotics-inc/jobs/4f9a9c1b-fb3e-45d7-b13d-53ed66ab3703" target="_blank">Production Technician</a><span class="job-date">Mar 16, 2026</span><span class="job-location" title="Rostock, Germany">Rostock</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://www.luminous.solar/career" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2024/04/luminous--1500x323.png" alt="Luminous" loading="lazy"></a>
+    <span class="company-name"><a href="https://www.luminous.solar/career" target="_blank">Luminous career page</a></span>
     <span class="job-count">7 roles</span>
   </div>
+  <p class="company-desc">Luminous unlocks scalable solar energy to combat labor and logistics bottlenecks jeopardizing our planet’s trajectory to a more sustainable future. Freeing construction workers from repetitive heavy lifting of solar panels in large solar farm projects, our robot fleets enable faster, safer, and more cost effective installations at scale.</p>
   <ul class="jobs">
-    <li><span class="no-link">Robotics Engineer</span></li>
-    <li><span class="no-link">Computer Vision Engineer</span></li>
-    <li><span class="no-link">Internship Hardware (m/f/d)</span></li>
-    <li><span class="no-link">Ecosystem Manager (m/f/d)</span></li>
-    <li><span class="no-link">Internship Strategy &amp; Execution (m/f/d)</span></li>
-    <li><span class="no-link">Robotics Deployment Engineer (m/f/d)</span></li>
-    <li><span class="no-link">Product Marketing Intern</span></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><a class="job-title" href="https://www.luminous.solar/vp-of-sales-au" target="_blank">VP of Sales</a><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><a class="job-title" href="https://www.luminous.solar/new-page" target="_blank">Robotics Assembly - Spring 2027</a><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><a class="job-title" href="https://www.luminous.solar/new-page-1" target="_blank">Robotics Field Technician</a><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><a class="job-title" href="https://www.luminous.solar/new-page-2" target="_blank">Software Co-op/Intern, Robotics</a><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><a class="job-title" href="https://www.luminous.solar/new-page-2-1-1" target="_blank">Product Co-op/Intern, Manager &amp; Designer</a><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><a class="job-title" href="https://www.luminous.solar/new-page-2-1" target="_blank">Software Co-op/Intern, Physical AI</a><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><a class="job-title" href="https://www.luminous.solar/new-page-1-1" target="_blank">Deployment Software Engineer</a><span class="job-date"></span><span class="job-location" title=""></span></li>
   </ul>
 </div>
 <div class="company">
   <div class="company-header">
-    <span class="company-name"><a href="http://tutorintelligence.com" target="_blank">Tutor Intelligence</a></span>
-    <span class="careers-link"><a href="https://jobs.lever.co/tutorintelligence/" target="_blank">careers page</a></span>
-    <span class="job-count">47 roles</span>
+    <a class="company-logo-link" href="https://maglevaero.com/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/08/MLA-Logo.png" alt="Maglev Aero" loading="lazy"></a>
+    <span class="company-name"><a href="https://maglevaero.com/careers" target="_blank">Maglev Aero career page</a></span>
+    <span class="job-count">2 roles</span>
   </div>
+  <p class="company-desc">Maglev Aero is quietly building the future of Urban Air Mobility.</p>
   <ul class="jobs">
-    <li><a href="https://jobs.lever.co/tutorintelligence/0e325304-1d44-4354-b1ef-7619ace3a9aa" target="_blank">Account Executive</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/f922edc4-cf80-4392-9c6a-f57ed1bb3d12" target="_blank">Computer Vision Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/1d83fdae-e6a8-4d97-91bb-3a99076255f8" target="_blank">Controller</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/19cf5cea-3da1-44b3-99e4-fd791c4f3bd3" target="_blank">Controls Engineer (Robotics)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/a4c58d4a-361b-4b25-83bb-2d3fe038f744" target="_blank">Electrical Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/7bb8415b-8446-48ca-918d-a7a5a40a0e86" target="_blank">Engineering Manager, Platform &amp; Infrastructure</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/9b79768a-5107-495c-a8e1-a79a60681252" target="_blank">Full Stack Software Engineer (XR Applications)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/bfe5d45b-69b4-4835-9370-038125c25c49" target="_blank">Hardware Systems Integration Engineer (Mandarin)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/25cb9789-9f57-40e5-a7e3-d6b0890e5011" target="_blank">Head of Marketing</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/9e010ddf-bcd9-46fa-be85-9e0e6b611ab6" target="_blank">Mechanical Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/80edb4bf-c3dc-4167-be83-340024a0c47f" target="_blank">Member of Technical Staff - Senior Robotics Software</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/905cb2ee-9e54-4cb1-91c5-c622e829327a" target="_blank">Member of Technical Staff - Senior Software Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/0cd17db5-ba25-4af9-baad-516fd5b85f62" target="_blank">Patent Agent / Patent Engineer (Robotics)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/73ddd613-fbd6-4ea2-9703-df9f1d4ed536" target="_blank">Perception Engineer, Robot Safety</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/49bccb90-2ac7-4d83-bf95-4140eff3b018" target="_blank">Product Manager -- Robotics</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/faf17567-e880-4d07-90d8-06c847dbb9da" target="_blank">Product Manager (Cassie)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/f772d72b-0662-410e-b708-ce7ed3b7f163" target="_blank">Research Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/e253af81-a899-4b4a-90c6-1f5042f75662" target="_blank">Robot Operator</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/e5ff994b-7a7d-4bda-a558-c983a8faf69d" target="_blank">Robotics Deployment Manager</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/fdb1c47e-4685-4ac7-b57f-f1ba1077c3ec" target="_blank">Robotics Infrastructure Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/3efd648e-4dbe-4bcf-a33e-b6ac5f03649a" target="_blank">Robotics Machine Learning Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/f84a0657-21f7-4db6-8c4d-c191e95241a1" target="_blank">Robotics Maintenance &amp; Field Service Technician II / III - MidWest</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/2a475dfe-13c5-4454-949a-a6014702c3df" target="_blank">Robotics Maintenance &amp; Field Service Technician II / III - North West</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/f4f64e0d-79cf-4f32-ad1e-4fc8d18f9827" target="_blank">Robotics Maintenance &amp; Field Service Technician II / III - South East</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/bf45f5f9-660f-429e-861b-03d1ce9c3d56" target="_blank">Robotics Maintenance and Field Services Technician II/III - Mid Atlantic</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/08bd8119-f585-472d-9068-6601048f50b6" target="_blank">Robotics Product Marketing Lead</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/17909bb1-3f32-46b6-89c9-83b68d00a3dd" target="_blank">Robotics Research Infrastructure</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/89213901-e04c-43af-8937-392a9f63dabd" target="_blank">Robotics Research Scientist</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/cc14adfa-0425-42b2-a804-ed1aead5a7c4" target="_blank">Robotics Research Scientist Intern (Winter/Spring 2026)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/1cc8dee5-ec0a-4a17-b360-ea79fea57c46" target="_blank">Robotics Software Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/f6a903f2-538c-4f5d-927c-c4d92942209a" target="_blank">Robotics Test &amp; Troubleshooting Technician</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/c03d8c28-c173-4fd8-a633-b77eaf45f467" target="_blank">Sales Development Representative (SDR)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/2de718df-0a92-4144-936c-33405ae238d2" target="_blank">Senior Electrical Engineer (Robotics)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/6589d15e-6927-4548-9bd6-2af1ec1eb7c8" target="_blank">Senior Full Stack Software Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/8038158d-8875-4dbd-a2b1-d7bec224a82b" target="_blank">Senior IT &amp; Security Engineer (Robotics)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/42f72e5c-4183-4dcb-85dc-7180d509c447" target="_blank">Senior Mechanical Engineer (Robotics)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/45c9b4d8-6045-4297-9575-318a9cbdc101" target="_blank">Senior Mechanical Engineer (Robotics)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/167eeb43-975c-4d2d-9d5f-f85f926e6daf" target="_blank">Senior Robotics Software Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/51301a04-3dbc-4c57-a8de-e5a5d72a79dc" target="_blank">Senior Software Engineer, Internal Systems (Robotics)</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/e346bab3-42e0-478c-8ec5-55bbb40eefbc" target="_blank">Senior Technical Program Manager</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/3ef7dbd4-19fc-4375-941c-70c7b97430b4" target="_blank">Shop Steward</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/5957da70-b13f-415e-9f3f-8e920daf9030" target="_blank">Strategic Accounts Development Manager</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/2f867566-0f5a-4a8e-829a-c7ba6ec3040b" target="_blank">Supply Chain Manager — Sonny</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/9b3f4378-b90d-453a-8169-1cb2b384e0da" target="_blank">Technical Customer Engineer</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/1b06945b-f974-40b1-8441-be106326a482" target="_blank">Technical Product Manager</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/7692dc62-7175-4cca-8879-50630daa2ec1" target="_blank">Technical Recruiter</a></li>
-    <li><a href="https://jobs.lever.co/tutorintelligence/2458b2e9-6508-4e48-8a8f-5061b3da743d" target="_blank">VR Robot Operator and Support Technician</a></li>
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><span class="job-title no-link">Director of Engineering</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">Chief Maglev Scientist</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://revoluterobotics.com/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2025/01/Logo-RevRob-Color-1500x480.png" alt="Revolute Robotics" loading="lazy"></a>
+    <span class="company-name"><a href="https://revoluterobotics.com/careers" target="_blank">Revolute Robotics career page</a></span>
+    <span class="job-count">3 roles</span>
+  </div>
+  <p class="company-desc">Revolute Robotics builds inspection and surveillance robots for hard-to-reach areas. Our Hybrid Mobility Robot (HMR) switches between driving and flying to collect data where never before possible with mobile robots, improving upon and creating new applications in industrial inspections, private security, public safety, and defense.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><a class="job-title" href="https://revoluterobotics.com/head-engineering" target="_blank">Head of Engineering</a><span class="job-date"></span><span class="job-location" title="Boston, MA">Boston</span></li>
+    <li data-posted=""><a class="job-title" href="https://revoluterobotics.com/control-systems-engineer" target="_blank">Control Systems Engineer</a><span class="job-date"></span><span class="job-location" title="Boston, MA">Boston</span></li>
+    <li data-posted=""><a class="job-title" href="https://revoluterobotics.com/drone-pilot-integration-engineer" target="_blank">Drone Pilot &amp; Integration Engineer</a><span class="job-date"></span><span class="job-location" title="Boston, MA">Boston</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://riibotics.career.greetinghr.com/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2026/08/Riibotics_Black-Seungmin-Baek-1500x298.png" alt="Riibotics" loading="lazy"></a>
+    <span class="company-name"><a href="https://riibotics.career.greetinghr.com/" target="_blank">Riibotics career page</a></span>
+    <span class="job-count">8 roles</span>
+  </div>
+  <p class="company-desc">Riibotics builds autonomous forklifts that drop into existing brownfield warehouses — no layout changes, no fixed infrastructure, and no WMS integration required. Our sensor-fusion SLAM and spatial AI deliver millimeter-level precision, so the robots move pallets safely alongside people, deploy in days, and pay for themselves within a year.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><span class="job-title no-link">[경력] FMS System Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">[전문연구요원] Robot Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">[경력] Robot Behavior Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">[경력] Robot Planning &amp; Control Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">[경력] Robot Platform Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">[경력] Embedded Control Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">[경력] Robot Perception Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+    <li data-posted=""><span class="job-title no-link">[경력] SLAM Engineer</span><span class="job-date"></span><span class="job-location" title=""></span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://sereact.ai/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2022/10/220512_sereact_bildwortmarke_verlauf.png" alt="sereact" loading="lazy"></a>
+    <span class="company-name"><a href="https://sereact.ai/careers" target="_blank">sereact career page</a></span>
+    <span class="job-count">44 roles</span>
+  </div>
+  <p class="company-desc">The mission of sereact is to enable robots to work self-reliantly. Through their AI software, machines can perceive their environment, develop intelligent decisions and implement them. This fully automates pick and place processes, making them more efficient, reliable and crisis-resistant.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2026-02-05"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/5649e368-88e0-4c0f-b263-a007b53b4694" target="_blank">Internship Hardware (m/f/d)</a><span class="job-date">Feb 5, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-10-21"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/2f81e531-942b-4ca1-be5e-b5f31ce50b41" target="_blank">Partner Manager (m/f/d)</a><span class="job-date">Oct 21, 2026</span><span class="job-location" title="Germany; France; Netherlands; Zurich; London (remote)">Remote</span></li>
+    <li data-posted="2026-02-05"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/816245cb-3d32-4e9c-b647-c75cd40fc487" target="_blank">Internship Strategy &amp; Execution (m/f/d)</a><span class="job-date">Feb 5, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-05-20"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/a8755452-ace3-4d71-bdf1-4659feb43496" target="_blank">Robotics Deployment Engineer (m/f/d)</a><span class="job-date">May 20, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-09-21"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/6232c37f-f89a-43bb-ab78-614587eb2e39" target="_blank">Generalist in Logistik &amp; Supply Chain (m/w/d)</a><span class="job-date">Sep 21, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-09-04"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/58f964c5-85e8-498c-820d-002df34cd559" target="_blank">Product Marketing Intern</a><span class="job-date">Sep 4, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-06-26"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/0a25cbf5-db56-4f5e-81b8-c46b477d247c" target="_blank">Mechanical Engineer (m/f/d)</a><span class="job-date">Jun 26, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-02-05"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/0d1eb70a-12e1-4e0c-b4fe-66b74e0fce16" target="_blank">Strategy &amp; Execution Manager (m/f/d) </a><span class="job-date">Feb 5, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-02-05"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/9a79bf5b-6f9b-4350-859b-6179a450ebc5" target="_blank">Solutions Manager (m/f/d)</a><span class="job-date">Feb 5, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-09-04"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/7549093b-0918-4136-ac47-81063ded166d" target="_blank">Product Manager Intern (m/f/d) </a><span class="job-date">Sep 4, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-09-17"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/7c52a4f8-8cb3-4c2c-bbba-aac885cd426a" target="_blank">Strategic Accounts Manager (m/f/d)</a><span class="job-date">Sep 17, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17; Germany (remote)">Remote</span></li>
+    <li data-posted="2026-03-04"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/3acc6db2-1179-43a7-9738-aa63be36b0ed" target="_blank">Senior Mechanical Engineer (m/f/d)</a><span class="job-date">Mar 4, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-03-10"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/54f1304b-89fb-47b4-ade5-51e1c2a74f41" target="_blank">Internship R&amp;D</a><span class="job-date">Mar 10, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/8895e31c-78ec-43a7-a167-33792c58eae5" target="_blank">Electrical Engineer</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Boston, Massachusetts (onsite)">Boston</span></li>
+    <li data-posted="2026-04-09"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/114f6360-c871-4490-8d20-ab74023ab52e" target="_blank">Robotics Support Lead </a><span class="job-date">Apr 9, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-05-04"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/8b4e3c71-bb45-499f-93ad-789db48d8a5c" target="_blank">Finance Leader (m/f/d)</a><span class="job-date">May 4, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-05-05"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/1cce177d-47c6-4d48-a861-1e827569a406" target="_blank">Director Asset Backed Financing</a><span class="job-date">May 5, 2026</span><span class="job-location" title="Germany (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-07-08"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/d410b572-0fcd-4283-8856-f1a1dfd95f51" target="_blank">Senior Research Scientist (m/f/d)</a><span class="job-date">Jul 8, 2026</span><span class="job-location" title="Zurich (onsite)">Zurich</span></li>
+    <li data-posted="2026-09-24"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/dec65d38-2a7f-4a49-bdc4-02741e3590f6" target="_blank">Elektroniker (m/w/d) </a><span class="job-date">Sep 24, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-05-15"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/858f19f0-4765-488c-a1ac-ac10ed77af93" target="_blank">Sales Manager US (m/f/d)</a><span class="job-date">May 15, 2026</span><span class="job-location" title="United States (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-07-20"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/6cdac4ee-0bbb-44f5-a846-c0dbe1ce345a" target="_blank">Internship Teleoperation &amp; Data Labeling </a><span class="job-date">Jul 20, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-09-02"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/e6d783ea-fa40-4f6d-bf7a-dfc2a2c61118" target="_blank">Technical Procurement / Purchasing Officer</a><span class="job-date">Sep 2, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-07-06"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/0bcdba71-5495-4d58-ba96-5530c3dd2017" target="_blank">Product Manager (m/f/d)</a><span class="job-date">Jul 6, 2026</span><span class="job-location" title="Germany; Boston, Massachusetts (hybrid)">Multiple</span></li>
+    <li data-posted="2026-06-15"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/65eec16e-7bd0-4362-bd7c-b8a58473d275" target="_blank">Product Marketing Manager</a><span class="job-date">Jun 15, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-07-01"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/e9f5853b-3ba6-4d21-854c-4bd89bd6bd63" target="_blank">Senior Robotics Deployment Engineer (m/f/d)</a><span class="job-date">Jul 1, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-08-06"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/c340239b-e7fd-462d-b323-8fadbf572b39" target="_blank">Teleoperation Trainer (m/f/d)</a><span class="job-date">Aug 6, 2026</span><span class="job-location" title="Germany (onsite)">Germany</span></li>
+    <li data-posted="2026-10-20"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/c0c87e1f-039b-4f01-8dab-e390e1853c82" target="_blank">Senior Support Engineer </a><span class="job-date">Oct 20, 2026</span><span class="job-location" title="Boston, Massachusetts (remote)">Remote</span></li>
+    <li data-posted="2026-09-01"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/5fc3ad9f-0e25-47d4-bf98-4f4d4fc47d2c" target="_blank">Operativer Einkauf</a><span class="job-date">Sep 1, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/d3938d18-fe4a-40f6-af8c-f8be70572306" target="_blank">Mechanical Design Engineer</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Boston, Massachusetts (onsite)">Boston</span></li>
+    <li data-posted="2026-08-18"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/f9e8a75d-5d01-4ff2-a968-5e066ea395f2" target="_blank">Teleoperation Engineer</a><span class="job-date">Aug 18, 2026</span><span class="job-location" title="Boston, Massachusetts (onsite)">Boston</span></li>
+    <li data-posted="2026-09-28"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/24f2048a-4342-49d1-97ec-dcfe7ce9f92e" target="_blank">Mechaniker / Mechatroniker (m/w/d) – Robotersysteme</a><span class="job-date">Sep 28, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (onsite)">Stuttgart Schockenriedstr. 17</span></li>
+    <li data-posted="2026-08-25"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/c6316a22-37f5-4ed0-8be1-cc46f06073b4" target="_blank">Product Designer (m/f/d)</a><span class="job-date">Aug 25, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-08-25"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/d9b3b7a1-fb7a-4c83-a77d-106912cfa5f6" target="_blank">Industrial Designer</a><span class="job-date">Aug 25, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-08-26"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/1b4b0518-d6ed-4bbb-8af8-9a80ea695ba9" target="_blank">Senior Technical Recruiter</a><span class="job-date">Aug 26, 2026</span><span class="job-location" title="London; Stuttgart Schockenriedstr. 17; Germany">Multiple</span></li>
+    <li data-posted="2026-10-20"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/b1307f88-d714-429d-acda-5249941e7ba2" target="_blank">Internship G2M (m/f/d)</a><span class="job-date">Oct 20, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-02"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/3e35b3a3-5642-4a49-a24f-a428306cb0c8" target="_blank">Human Resources Specialist</a><span class="job-date">Oct 2, 2026</span><span class="job-location" title="United States">United States</span></li>
+    <li data-posted="2026-09-16"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/9134861b-4bd8-41ea-b28e-dd590bf7562e" target="_blank">Technical Support Engineer (m/f/d)</a><span class="job-date">Sep 16, 2026</span><span class="job-location" title="Germany (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-16"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/94c6d20b-b204-4ee0-b3aa-894dc493a3a7" target="_blank">Research Engineer (m/f/d)</a><span class="job-date">Oct 16, 2026</span><span class="job-location" title="Zurich (onsite)">Zurich</span></li>
+    <li data-posted="2026-10-13"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/f585585b-9161-4586-95a6-0b72f052d944" target="_blank">Member of Technical Staff (m/f/d)</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="Zurich (onsite)">Zurich</span></li>
+    <li data-posted="2026-10-20"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/cf0fd87e-0969-46a5-8990-5f94e549bf97" target="_blank">Director NPI &amp; Industrialization</a><span class="job-date">Oct 20, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-20"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/27ae9382-f320-4742-878f-66ef1e63b4f8" target="_blank">Director Supply Chain &amp; Hardware Operations</a><span class="job-date">Oct 20, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-20"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/124f5b05-7e94-495c-b168-ca3e9463c7a5" target="_blank">Director Technical Support &amp; Field Service</a><span class="job-date">Oct 20, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/1c0d95eb-62a4-4b65-8047-b4ff36d0c13e" target="_blank">Chief Science Officer</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17; Zurich; Boston, Massachusetts (hybrid)">Multiple</span></li>
+    <li data-posted="2026-10-27"><a class="job-title" href="https://jobs.ashbyhq.com/sereact/30448761-77dc-4bb9-b6cf-2de89487257c" target="_blank">Field Marketing Manager</a><span class="job-date">Oct 27, 2026</span><span class="job-location" title="Stuttgart Schockenriedstr. 17 (hybrid)">Hybrid</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://jobs.lever.co/tutorintelligence/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2023/08/Logo-Black-on-transparent-1500x511.png" alt="Tutor Intelligence" loading="lazy"></a>
+    <span class="company-name"><a href="https://jobs.lever.co/tutorintelligence/" target="_blank">Tutor Intelligence career page</a></span>
+    <span class="job-count">56 roles</span>
+  </div>
+  <p class="company-desc">Tutor Intelligence is bringing next-level autonomy to robot arms, democratizing pick &amp; place automation for warehousing and beyond.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted="2025-07-14"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/0e325304-1d44-4354-b1ef-7619ace3a9aa" target="_blank">Account Executive</a><span class="job-date">Jul 14, 2025</span><span class="job-location" title="Los Angeles, CA (remote)">Remote</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/f69b1ae3-0790-4f37-aa83-feb2304f393d" target="_blank">Account Executive</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="Atlanta, GA (remote)">Remote</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/f922edc4-cf80-4392-9c6a-f57ed1bb3d12" target="_blank">Computer Vision Engineer</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-22"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/1d83fdae-e6a8-4d97-91bb-3a99076255f8" target="_blank">Controller</a><span class="job-date">Sep 22, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-23"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/19cf5cea-3da1-44b3-99e4-fd791c4f3bd3" target="_blank">Controls Engineer (Robotics)</a><span class="job-date">Sep 23, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/a4c58d4a-361b-4b25-83bb-2d3fe038f744" target="_blank">Electrical Engineer</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-22"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/7bb8415b-8446-48ca-918d-a7a5a40a0e86" target="_blank">Engineering Manager, Platform &amp; Infrastructure</a><span class="job-date">Sep 22, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-19"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/481d2654-5f95-4e10-866d-4dca86e4857c" target="_blank">Enterprise Sales Director</a><span class="job-date">Oct 19, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-19"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/951d301c-e7b5-424c-babd-45a9651bda37" target="_blank">Enterprise Sales Director</a><span class="job-date">Oct 19, 2026</span><span class="job-location" title="Atlanta, GA (remote)">Remote</span></li>
+    <li data-posted="2026-10-01"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/bad65eb2-8887-46a1-8569-1a54672ffe38" target="_blank">Enterprise Sales Director</a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="Los Angeles, CA (remote)">Remote</span></li>
+    <li data-posted="2026-05-05"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/9b79768a-5107-495c-a8e1-a79a60681252" target="_blank">Full Stack Software Engineer (XR Applications)</a><span class="job-date">May 5, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-01"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/bfe5d45b-69b4-4835-9370-038125c25c49" target="_blank">Hardware Systems Integration Engineer (Mandarin)</a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-27"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/ded72d52-4a77-4722-9f8e-cdf106b20e70" target="_blank">Head of Company Operations</a><span class="job-date">Oct 27, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-17"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/d6a4b483-aee6-442b-a7a5-b651999c6f0f" target="_blank">Head of Engineering</a><span class="job-date">Oct 17, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-07-08"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/25cb9789-9f57-40e5-a7e3-d6b0890e5011" target="_blank">Head of Marketing</a><span class="job-date">Jul 8, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-26"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/11ce838d-5df0-49be-886d-a0709b102487" target="_blank">Head of Technical Operations (Manufacturing, Supply Chain, Field)</a><span class="job-date">Oct 26, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/9d0edff2-bce8-4277-a150-840235cd0204" target="_blank">Lead Hardware Engineer – Production</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/9e010ddf-bcd9-46fa-be85-9e0e6b611ab6" target="_blank">Mechanical Engineer</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-01-05"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/80edb4bf-c3dc-4167-be83-340024a0c47f" target="_blank">Member of Technical Staff - Senior Robotics Software</a><span class="job-date">Jan 5, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-01-05"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/905cb2ee-9e54-4cb1-91c5-c622e829327a" target="_blank">Member of Technical Staff - Senior Software Engineer</a><span class="job-date">Jan 5, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-19"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/8ddecc24-28e0-44e6-aa83-0425d668a5b2" target="_blank">Not seeing a role that fits you?</a><span class="job-date">Oct 19, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-23"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/73ddd613-fbd6-4ea2-9703-df9f1d4ed536" target="_blank">Perception Engineer, Robot Safety</a><span class="job-date">Sep 23, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-08-06"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/faf17567-e880-4d07-90d8-06c847dbb9da" target="_blank">Product Manager - Cassie</a><span class="job-date">Aug 6, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-08-17"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/49bccb90-2ac7-4d83-bf95-4140eff3b018" target="_blank">Product Manager - Robotics</a><span class="job-date">Aug 17, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/aa957bc5-3b20-4ac3-bd0e-8ef7d9ef12cc" target="_blank">Production Engineer - Manufacturing Process and ECO Implementation</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-24"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/6a24392e-e948-48de-b55c-dd75abe720df" target="_blank">Production Supervisor - Robotics Assembly</a><span class="job-date">Oct 24, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-27"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/9d9e346c-c9b4-47f0-853e-2ea7feed3f1f" target="_blank">Recruiting Coordinator (6-month Contract to Hire)</a><span class="job-date">Oct 27, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2025-08-10"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/f772d72b-0662-410e-b708-ce7ed3b7f163" target="_blank">Research Engineer</a><span class="job-date">Aug 10, 2025</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-27"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/a99e4299-28a5-4ec5-abca-d60281397d12" target="_blank">Robot Support Specialist</a><span class="job-date">Oct 27, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-07-08"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/e5ff994b-7a7d-4bda-a558-c983a8faf69d" target="_blank">Robotics Deployment Manager</a><span class="job-date">Jul 8, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-04-10"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/fdb1c47e-4685-4ac7-b57f-f1ba1077c3ec" target="_blank">Robotics Infrastructure Engineer</a><span class="job-date">Apr 10, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2025-02-02"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/3efd648e-4dbe-4bcf-a33e-b6ac5f03649a" target="_blank">Robotics Machine Learning Engineer</a><span class="job-date">Feb 2, 2025</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-15"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/bf45f5f9-660f-429e-861b-03d1ce9c3d56" target="_blank">Robotics Maintenance &amp; Field Service Technician II / III - Mid Atlantic</a><span class="job-date">Sep 15, 2026</span><span class="job-location" title="Philadelphia, PA (remote)">Remote</span></li>
+    <li data-posted="2026-06-02"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/f84a0657-21f7-4db6-8c4d-c191e95241a1" target="_blank">Robotics Maintenance &amp; Field Service Technician II / III - MidWest</a><span class="job-date">Jun 2, 2026</span><span class="job-location" title="Chicago, IL (remote)">Remote</span></li>
+    <li data-posted="2026-10-25"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/b5d2be7a-8cb8-44f2-b58d-77c1c7fd2c34" target="_blank">Robotics Maintenance &amp; Field Service Technician II / III - South</a><span class="job-date">Oct 25, 2026</span><span class="job-location" title="Dallas–Fort Worth, TX (remote)">Remote</span></li>
+    <li data-posted="2026-09-09"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/f4f64e0d-79cf-4f32-ad1e-4fc8d18f9827" target="_blank">Robotics Maintenance &amp; Field Service Technician II / III - South East</a><span class="job-date">Sep 9, 2026</span><span class="job-location" title="Atlanta, GA (remote)">Remote</span></li>
+    <li data-posted="2026-07-08"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/08bd8119-f585-472d-9068-6601048f50b6" target="_blank">Robotics Product Marketing Lead</a><span class="job-date">Jul 8, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-19"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/652b0f01-8d20-4e88-96e2-1149983a2dc1" target="_blank">Robotics Quality &amp; Reliability Engineer</a><span class="job-date">Oct 19, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/17909bb1-3f32-46b6-89c9-83b68d00a3dd" target="_blank">Robotics Research Infrastructure Engineer</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2025-08-30"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/89213901-e04c-43af-8937-392a9f63dabd" target="_blank">Robotics Research Scientist</a><span class="job-date">Aug 30, 2025</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2025-02-02"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/1cc8dee5-ec0a-4a17-b360-ea79fea57c46" target="_blank">Robotics Software Engineer</a><span class="job-date">Feb 2, 2025</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-05"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/f6a903f2-538c-4f5d-927c-c4d92942209a" target="_blank">Robotics Test &amp; Troubleshooting Technician</a><span class="job-date">Oct 5, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-15"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/a1ca1d6d-d9b2-446d-827b-0cba40ecf215" target="_blank">Sales Development Representative</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="Atlanta, GA (remote)">Remote</span></li>
+    <li data-posted="2025-06-11"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/c03d8c28-c173-4fd8-a633-b77eaf45f467" target="_blank">Sales Development Representative (SDR)</a><span class="job-date">Jun 11, 2025</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-06-21"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/2de718df-0a92-4144-936c-33405ae238d2" target="_blank">Senior Electrical Engineer (Robotics)</a><span class="job-date">Jun 21, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2025-05-15"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/6589d15e-6927-4548-9bd6-2af1ec1eb7c8" target="_blank">Senior Full Stack Software Engineer</a><span class="job-date">May 15, 2025</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-22"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/8038158d-8875-4dbd-a2b1-d7bec224a82b" target="_blank">Senior IT &amp; Security Engineer (Robotics)</a><span class="job-date">Sep 22, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-08-20"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/42f72e5c-4183-4dcb-85dc-7180d509c447" target="_blank">Senior Mechanical Engineer (Robotics)</a><span class="job-date">Aug 20, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2025-05-15"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/167eeb43-975c-4d2d-9d5f-f85f926e6daf" target="_blank">Senior Robotics Software Engineer</a><span class="job-date">May 15, 2025</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-09"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/e346bab3-42e0-478c-8ec5-55bbb40eefbc" target="_blank">Senior Technical Program Manager</a><span class="job-date">Sep 9, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-10-05"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/3ef7dbd4-19fc-4375-941c-70c7b97430b4" target="_blank">Shop Steward</a><span class="job-date">Oct 5, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-07-20"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/5957da70-b13f-415e-9f3f-8e920daf9030" target="_blank">Strategic Accounts Development Manager</a><span class="job-date">Jul 20, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-16"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/2f867566-0f5a-4a8e-829a-c7ba6ec3040b" target="_blank">Supply Chain Manager — Sonny</a><span class="job-date">Sep 16, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-29"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/9b3f4378-b90d-453a-8169-1cb2b384e0da" target="_blank">Technical Customer Engineer</a><span class="job-date">Sep 29, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-08-17"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/1b06945b-f974-40b1-8441-be106326a482" target="_blank">Technical Product Manager</a><span class="job-date">Aug 17, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+    <li data-posted="2026-09-09"><a class="job-title" href="https://jobs.lever.co/tutorintelligence/2458b2e9-6508-4e48-8a8f-5061b3da743d" target="_blank">VR Robot Operator and Support Technician</a><span class="job-date">Sep 9, 2026</span><span class="job-location" title="Watertown, MA (onsite)">Watertown</span></li>
+  </ul>
+</div>
+<div class="company">
+  <div class="company-header">
+    <a class="company-logo-link" href="https://www.whelix.co/careers" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2025/02/whelix_horizontal-black-1-1500x382.png" alt="Whelix" loading="lazy"></a>
+    <span class="company-name"><a href="https://www.whelix.co/careers" target="_blank">Whelix career page</a></span>
+    <span class="job-count">2 roles</span>
+  </div>
+  <p class="company-desc">Whelix (formerly Mito Robotics) is building intelligent and accessible robots to accelerate life science research through wet lab automation. Our first focus is solving one of the most manual and repetitive bottlenecks in the lab — cell culture — a process that often suffers from poor standardization and limited scalability. By automating cell culture with intelligent robotics, Whelix empowers scientists to achieve faster, more reproducible, and more scalable discoveries.</p>
+  <ul class="jobs">
+    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
+    <li data-posted=""><a class="job-title" href="https://www.whelix.co/careers/3-senior-robotics-software-engineer" target="_blank">Senior Robotics Software Engineer</a><span class="job-date"></span><span class="job-location" title="Boston, MA (onsite)">Boston</span></li>
+    <li data-posted=""><a class="job-title" href="https://www.whelix.co/careers/2-senior-mechanical-engineer" target="_blank">Senior Mechanical Engineer</a><span class="job-date"></span><span class="job-location" title="Boston, MA (onsite)">Boston</span></li>
   </ul>
 </div>
 </main>
+<script>
+// Clicking "Posted" or "Location" sorts every company's job list by that
+// column; clicking it again reverses the order. Jobs missing the value
+// always go last. Posted starts newest-first, Location A-Z.
+document.addEventListener("click", function (e) {
+  var btn = e.target.closest(".sort-btn");
+  if (!btn) return;
+  var key = btn.dataset.key;
+  var dir = btn.dataset.dir === "desc" ? "asc"
+          : btn.dataset.dir === "asc" ? "desc"
+          : key === "posted" ? "desc" : "asc";
+  document.querySelectorAll(".sort-btn").forEach(function (b) {
+    if (b.dataset.key === key) b.dataset.dir = dir;
+    else delete b.dataset.dir;
+  });
+  function value(li) {
+    return key === "posted" ? (li.dataset.posted || "")
+         : li.querySelector(".job-location").textContent.trim();
+  }
+  document.querySelectorAll("ul.jobs").forEach(function (ul) {
+    var rows = Array.from(ul.querySelectorAll("li:not(.jobs-head)"));
+    rows.sort(function (a, b) {
+      var x = value(a), y = value(b);
+      if (!x || !y) return (x ? 0 : 1) - (y ? 0 : 1);
+      var c = x.localeCompare(y);
+      return dir === "asc" ? c : -c;
+    });
+    rows.forEach(function (li) { ul.appendChild(li); });
+  });
+});
+</script>
 </body>
 </html>

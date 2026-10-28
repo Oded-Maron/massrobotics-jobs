@@ -4,13 +4,14 @@ MassRobotics Job Listing Scraper
 Scrapes job listings from MassRobotics resident startup websites and generates jobs.html and index.html.
 """
 
+import argparse
 import json
 import re
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
-from threading import Lock
+from threading import Lock, local
 from urllib.parse import urljoin, urlparse
 
 import requests
@@ -26,6 +27,7 @@ MASSROBOTICS_URL = "https://www.massrobotics.org/startups/massrobotics-resident-
 OUTPUT_FILES = ["jobs.html", "index.html"]
 REQUEST_TIMEOUT = 10
 REQUEST_DELAY = 0.5  # seconds between requests
+RATE_LIMIT_RETRIES = 3  # retries after a 429 Too Many Requests
 
 HEADERS = {
     "User-Agent": (
@@ -174,7 +176,11 @@ _LAYOUT_CHROME_RE = re.compile(
 )
 
 # Workers for parallel company processing
-MAX_WORKERS = 8
+MAX_WORKERS = 16
+# Career paths probed concurrently per company (keeps per-site load modest)
+PROBE_BATCH_SIZE = 6
+_PROBE_POOL = ThreadPoolExecutor(max_workers=MAX_WORKERS * PROBE_BATCH_SIZE)
+_THREAD_LOCAL = local()
 _PRINT_LOCK = Lock()
 
 
@@ -196,18 +202,35 @@ def strip_layout_chrome(soup):
             tag.decompose()
 
 
+def _session():
+    """Per-thread requests.Session so connections are reused across requests."""
+    session = getattr(_THREAD_LOCAL, "session", None)
+    if session is None:
+        session = _THREAD_LOCAL.session = requests.Session()
+    return session
+
+
 def make_request(url, method="get", **kwargs):
-    """Make an HTTP request with error handling. Returns Response or None."""
-    try:
-        kwargs.setdefault("timeout", REQUEST_TIMEOUT)
-        kwargs.setdefault("headers", HEADERS)
-        kwargs.setdefault("allow_redirects", True)
-        resp = getattr(requests, method)(url, **kwargs)
+    """
+    Make an HTTP request with error handling. Returns Response or None.
+    A 429 (rate limited) response is retried after a short back-off, since
+    some sites throttle the parallel careers-path probes.
+    """
+    kwargs.setdefault("timeout", REQUEST_TIMEOUT)
+    kwargs.setdefault("headers", HEADERS)
+    kwargs.setdefault("allow_redirects", True)
+    for attempt in range(RATE_LIMIT_RETRIES + 1):
+        try:
+            resp = getattr(_session(), method)(url, **kwargs)
+        except Exception:
+            return None
         if resp.status_code == 200:
             return resp
-        return None
-    except Exception:
-        return None
+        if resp.status_code != 429 or attempt == RATE_LIMIT_RETRIES:
+            return None
+        retry_after = resp.headers.get("Retry-After", "")
+        delay = int(retry_after) if retry_after.isdigit() else 2 * (attempt + 1)
+        time.sleep(min(delay, 10))
 
 
 def get_soup(url):
@@ -216,7 +239,7 @@ def get_soup(url):
     if resp is None:
         return None
     try:
-        return BeautifulSoup(resp.text, "lxml")
+        return BeautifulSoup(resp.content, "lxml")
     except Exception:
         return None
 
@@ -232,6 +255,55 @@ def get_residents():
         print("ERROR: Could not fetch MassRobotics resident page.", file=sys.stderr)
         sys.exit(1)
 
+    residents = _residents_from_cards(soup)
+    if not residents:
+        print("WARNING: no resident cards found; falling back to link scan "
+              "(no logos or descriptions).", file=sys.stderr)
+        residents = _residents_from_links(soup)
+
+    print(f"Found {len(residents)} residents.")
+    return residents
+
+
+def _residents_from_cards(soup):
+    """
+    Parse the WordPress resident cards (div.post-wrap.resident), each holding
+    a logo, the linked company name, and a short description.
+    """
+    residents = []
+    seen_urls = set()
+    for card in soup.select("div.post-wrap.resident"):
+        a = card.select_one(".content-wrap h1 a[href]")
+        if a is None:
+            continue  # no website listed, nothing to scrape
+        href = a["href"].strip()
+        parsed = urlparse(href)
+        if not href.startswith("http") or parsed.netloc in seen_urls:
+            continue
+        if any(bl in parsed.netloc.lower() for bl in RESIDENT_DOMAIN_BLACKLIST):
+            continue
+        seen_urls.add(parsed.netloc)
+        name = " ".join(a.get_text(" ", strip=True).split())
+
+        img = card.select_one(".image-wrap img")
+        logo = (img.get("src") or img.get("data-src")) if img else None
+
+        # Description is everything in the content block except the name heading
+        content = card.select_one(".content-wrap")
+        content.find("h1").decompose()
+        description = " ".join(content.get_text(" ", strip=True).split())
+
+        residents.append({
+            "name": name,
+            "url": f"{parsed.scheme}://{parsed.netloc}",
+            "logo": logo,
+            "description": description,
+        })
+    return residents
+
+
+def _residents_from_links(soup):
+    """Fallback: treat every external link in the page body as a resident."""
     residents = []
     seen_urls = set()
 
@@ -266,9 +338,34 @@ def get_residents():
         # Normalize URL to just scheme + netloc
         base_url = f"{parsed.scheme}://{parsed.netloc}"
         residents.append({"name": text, "url": base_url})
-
-    print(f"Found {len(residents)} residents.")
     return residents
+
+
+def _probe_career_path(url, company_domain):
+    """
+    Fetch one candidate careers URL. Returns the careers URL it leads to,
+    or None if it doesn't look like a careers page.
+    """
+    resp = make_request(url)
+    if resp is None:
+        return None
+    final_url = resp.url
+    final_domain = urlparse(final_url).netloc
+    # Reject if redirected to a parked/expired domain
+    if any(bd in final_domain for bd in CAREERS_DOMAIN_BLACKLIST):
+        return None
+    # Accept only if still on company domain or a known job board
+    on_company = company_domain in final_domain or final_domain in company_domain
+    on_job_board = any(jb in final_domain for jb in KNOWN_JOB_BOARDS)
+    if not (on_company or on_job_board) or urlparse(final_url).path in ("", "/", "//"):
+        return None
+    # If the careers page directly links to a known job board
+    # (e.g. dephy.com/careers → apply.workable.com/dephy/),
+    # prefer the board URL so the HTML careers link is accurate.
+    m = _BOARD_HREF_RE.search(resp.text)
+    if m:
+        return m.group(0).rstrip("/") + "/"
+    return final_url
 
 
 def find_careers_url(company_url):
@@ -281,31 +378,17 @@ def find_careers_url(company_url):
 
     company_domain = parsed.netloc
 
-    # 1. Try common career subpaths
-    for path in CAREER_PATHS:
-        url = base + path
-        resp = make_request(url)
-        if resp is not None:
-            final_url = resp.url
-            final_domain = urlparse(final_url).netloc
-            # Reject if redirected to a parked/expired domain
-            if any(bd in final_domain for bd in CAREERS_DOMAIN_BLACKLIST):
-                time.sleep(0.1)
-                continue
-            # Accept only if still on company domain or a known job board
-            on_company = company_domain in final_domain or final_domain in company_domain
-            on_job_board = any(jb in final_domain for jb in KNOWN_JOB_BOARDS)
-            if (on_company or on_job_board) and urlparse(final_url).path not in ("", "/", "//"):
-                # If the careers page directly links to a known job board
-                # (e.g. dephy.com/careers → apply.workable.com/dephy/),
-                # prefer the board URL so the HTML careers link is accurate.
-                m = _BOARD_HREF_RE.search(resp.text)
-                if m:
-                    time.sleep(REQUEST_DELAY)
-                    return m.group(0).rstrip("/") + "/"
+    # 1. Try common career subpaths, a batch at a time in parallel. Results
+    # are checked in CAREER_PATHS order, so the earliest matching path wins.
+    urls = [base + path for path in CAREER_PATHS]
+    for i in range(0, len(urls), PROBE_BATCH_SIZE):
+        futures = [_PROBE_POOL.submit(_probe_career_path, url, company_domain)
+                   for url in urls[i:i + PROBE_BATCH_SIZE]]
+        for future in futures:
+            found = future.result()
+            if found:
                 time.sleep(REQUEST_DELAY)
-                return final_url
-        time.sleep(0.1)
+                return found
 
     # 2. Scan homepage links for career keywords
     time.sleep(REQUEST_DELAY)
@@ -356,7 +439,17 @@ def extract_lever(slug):
         return []
     try:
         data = resp.json()
-        return [{"title": item["text"], "url": item.get("hostedUrl")} for item in data]
+        jobs = []
+        for item in data:
+            cats = item.get("categories") or {}
+            jobs.append({
+                "title": item["text"],
+                "url": item.get("hostedUrl"),
+                "posted": parse_date(item.get("createdAt")),
+                **location_fields(cats.get("allLocations") or [cats.get("location")],
+                                  item.get("workplaceType")),
+            })
+        return jobs
     except Exception:
         return []
 
@@ -370,15 +463,54 @@ def extract_greenhouse(slug):
     try:
         data = resp.json()
         return [
-            {"title": job["title"], "url": job.get("absolute_url")}
+            {
+                "title": job["title"],
+                "url": job.get("absolute_url"),
+                "posted": parse_date(job.get("first_published")),
+                **location_fields([(job.get("location") or {}).get("name")]),
+            }
             for job in data.get("jobs", [])
         ]
     except Exception:
         return []
 
 
+def ashby_board(slug):
+    """
+    Ashby public posting API. Returns {job_id: job dict}, or None on failure.
+    Cached, since company sites often link many jobs on the same Ashby board.
+    """
+    with _BOARD_CACHE_LOCK:
+        if ("ashby", slug) in _BOARD_CACHE:
+            return _BOARD_CACHE[("ashby", slug)]
+    board = None
+    resp = make_request(f"https://api.ashbyhq.com/posting-api/job-board/{slug}")
+    if resp is not None:
+        try:
+            board = {}
+            for item in resp.json().get("jobs", []):
+                if item.get("isListed") is False:
+                    continue
+                locs = [item.get("location")] + [
+                    x.get("location") for x in item.get("secondaryLocations") or []]
+                board[item["id"]] = {
+                    "title": item["title"],
+                    "url": item.get("jobUrl"),
+                    "posted": parse_date(item.get("publishedAt")),
+                    **location_fields(locs, item.get("workplaceType")),
+                }
+        except Exception:
+            board = None
+    with _BOARD_CACHE_LOCK:
+        _BOARD_CACHE[("ashby", slug)] = board
+    return board
+
+
 def extract_ashby(slug, page_url):
-    """Ashby renders jobs server-side; scrape the HTML listing."""
+    """Ashby: use the posting API, falling back to scraping the HTML listing."""
+    board = ashby_board(slug)
+    if board:
+        return list(board.values())
     soup = get_soup(page_url)
     if soup is None:
         return []
@@ -411,13 +543,13 @@ def extract_workable(slug, page_url):
     """Workable job board: uses the v3 JSON API."""
     api_url = f"https://apply.workable.com/api/v3/accounts/{slug}/jobs"
     try:
-        resp = requests.post(
+        resp = make_request(
             api_url,
+            method="post",
             json={},
-            headers={"Content-Type": "application/json"},
-            timeout=REQUEST_TIMEOUT,
+            headers={**HEADERS, "Content-Type": "application/json"},
         )
-        if not resp.ok:
+        if resp is None:
             return []
         data = resp.json()
         jobs = []
@@ -427,14 +559,42 @@ def extract_workable(slug, page_url):
             if title and is_job_title(title):
                 job_url = (f"https://apply.workable.com/{slug}/j/{shortcode}/"
                            if shortcode else None)
-                jobs.append({"title": title, "url": job_url})
+                locs = [", ".join(filter(None, [loc.get("city"), loc.get("region")]))
+                        or loc.get("country")
+                        for loc in item.get("locations") or [item.get("location") or {}]]
+                workplace = "remote" if item.get("remote") else item.get("workplace")
+                jobs.append({
+                    "title": title,
+                    "url": job_url,
+                    "posted": parse_date(item.get("published")),
+                    **location_fields(locs, workplace),
+                })
         return jobs
     except Exception:
         return []
 
 
 def extract_rippling(slug, page_url):
-    """Rippling ATS: server-side rendered Next.js, scrape the jobs listing page."""
+    """
+    Rippling ATS: use the public board API (titles + locations), falling back
+    to scraping the server-rendered jobs listing page.
+    """
+    resp = make_request(f"https://api.rippling.com/platform/api/ats/v1/board/{slug}/jobs")
+    if resp is not None:
+        try:
+            jobs = [
+                {
+                    "title": item["name"].strip(),
+                    "url": item.get("url"),
+                    **location_fields([(item.get("workLocation") or {}).get("label")]),
+                }
+                for item in resp.json()
+                if is_job_title(item["name"].strip())
+            ]
+            if jobs:
+                return jobs
+        except Exception:
+            pass
     url = f"https://ats.rippling.com/{slug}/jobs"
     soup = get_soup(url)
     if soup is None:
@@ -457,6 +617,240 @@ def extract_rippling(slug, page_url):
             seen.add(title)
             jobs.append({"title": title, "url": full_url})
     return jobs
+
+
+# ---------------------------------------------------------------------------
+# Posting date / location
+# ---------------------------------------------------------------------------
+
+_BOARD_CACHE = {}
+_BOARD_CACHE_LOCK = Lock()
+
+_COUNTRY_PREFIXES = {
+    "us", "usa", "uk", "united states", "united kingdom", "canada", "germany",
+    "france", "switzerland", "israel", "japan", "australia",
+}
+# Regions that, paired with "Remote", mean remote work rather than an office
+_REMOTE_REGIONS = _COUNTRY_PREFIXES | {
+    "global", "worldwide", "anywhere", "europe", "emea", "north america", "americas",
+}
+_WORKPLACE_WORDS_RE = re.compile(
+    r"\(?\b(?:remote|on-?site|hybrid)\b\)?|\b(?:hub|office|hq)\b", re.IGNORECASE)
+
+
+def parse_date(value):
+    """Parse an epoch-ms number or ISO-8601 string to 'YYYY-MM-DD', or None."""
+    if value in (None, ""):
+        return None
+    try:
+        if isinstance(value, (int, float)):
+            return datetime.fromtimestamp(value / 1000).strftime("%Y-%m-%d")
+        m = re.match(r"\s*(\d{4}-\d{2}-\d{2})", str(value))
+        return m.group(1) if m else None
+    except (ValueError, OverflowError, OSError):
+        return None
+
+
+def _city(location):
+    """
+    'US, Boston, MA' / 'Boston, MA' / 'Onsite Berlin' / 'Boston Hub' /
+    '529 Main St, Boston MA' -> city.
+    """
+    parts = [p.strip() for p in _WORKPLACE_WORDS_RE.sub(" ", location).split(",")]
+    parts = [" ".join(p.split()) for p in parts if p.strip()]
+    if len(parts) > 1 and parts[0].lower() in _COUNTRY_PREFIXES:
+        parts = parts[1:]
+    if len(parts) > 1 and parts[0][0].isdigit():
+        parts = parts[1:]  # street address
+    if not parts:
+        return None
+    return re.sub(r"(?<=[a-z]) (?-i:[A-Z]{2})$", "", parts[0]) or None
+
+
+def _is_remote_region(location):
+    """True for e.g. 'Remote', 'Canada - Remote', 'Remote, USA', 'Global (Remote)'."""
+    if not re.search(r"\bremote\b", location, re.IGNORECASE):
+        return False
+    rest = re.sub(r"[\s,()/-]+", " ", _WORKPLACE_WORDS_RE.sub(" ", location)).strip().lower()
+    return not rest or rest in _REMOTE_REGIONS
+
+
+def location_fields(locations, workplace=None):
+    """
+    Summarise a job's raw location strings and workplace type (remote/hybrid/
+    onsite, as boards report it) into {"location": label, "location_detail": str}.
+    The label is a city, "Remote", "Hybrid" (hybrid, or remote allowed
+    alongside an office), or "Multiple" (several offices); the detail lists
+    every raw location for the hover tooltip.
+    """
+    raw = [" ".join(str(l).split()) for l in locations if l and str(l).strip()]
+    raw = list(dict.fromkeys(raw))
+    workplace = re.sub(r"[^a-z]", "", (workplace or "").lower())
+    remote_listed = any(re.search(r"\bremote\b", l, re.IGNORECASE) for l in raw)
+    # "Canada - Remote" / "Remote, USA" name a country, not a city
+    places = [l for l in raw if not _is_remote_region(l)]
+    cities = list(dict.fromkeys(c for c in (_city(l) for l in places) if c))
+
+    if workplace == "remote" or (remote_listed and not cities):
+        label = "Remote"
+    elif len(cities) > 1:
+        label = "Multiple"
+    elif workplace == "hybrid" or remote_listed:
+        label = "Hybrid"
+    else:
+        label = cities[0] if cities else None
+    if not label:
+        return {}
+    detail = "; ".join(raw)
+    if workplace in ("remote", "hybrid", "onsite") and workplace not in detail.lower():
+        detail = f"{detail} ({workplace})" if detail else workplace
+    return {"location": label, "location_detail": detail}
+
+
+_UUID_RE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+_RIPPLING_DATE_RE = re.compile(r'"createdOn":"(\d{4}-\d{2}-\d{2})')
+
+
+def _job_page_details(url):
+    """
+    Read a job's own page for its posting date and location, from schema.org
+    JobPosting data (JSON-LD or microdata) or, on Rippling, the embedded
+    page data. Returns a dict with any of "posted", "location", "location_detail".
+    """
+    resp = make_request(url)
+    if resp is None:
+        return {}
+    soup = BeautifulSoup(resp.content, "html.parser")
+    found = {}
+
+    for script in soup.find_all("script", type="application/ld+json"):
+        try:
+            data = json.loads(script.string or "")
+        except Exception:
+            continue
+        items = data if isinstance(data, list) else data.get("@graph", [data])
+        for item in items:
+            if not isinstance(item, dict) or item.get("@type") != "JobPosting":
+                continue
+            found["posted"] = parse_date(item.get("datePosted"))
+            places = item.get("jobLocation") or []
+            places = places if isinstance(places, list) else [places]
+            locs = []
+            for place in places:
+                addr = (place or {}).get("address") or {}
+                if isinstance(addr, dict):
+                    locs.append(", ".join(filter(None, [addr.get("addressLocality"),
+                                                        addr.get("addressRegion")])))
+            workplace = "remote" if item.get("jobLocationType") == "TELECOMMUTE" else None
+            found.update(location_fields(locs, workplace))
+            return found
+
+    tag = soup.find(attrs={"itemprop": "datePosted"})
+    if tag:
+        found["posted"] = parse_date(tag.get("content") or tag.get_text(strip=True))
+        city = soup.find(attrs={"itemprop": "addressLocality"})
+        if city:
+            found.update(location_fields([city.get("content") or city.get_text(strip=True)]))
+        return found
+
+    m = _RIPPLING_DATE_RE.search(resp.text)
+    if m:
+        found["posted"] = m.group(1)
+    h1 = soup.find("h1")
+    if h1 is not None:
+        found.update(_card_locations(h1))
+    return found
+
+
+def enrich_jobs(jobs):
+    """
+    Fill in missing posting dates and locations. Jobs on an Ashby board are
+    matched against its API; others have their own page read in parallel.
+    """
+    to_fetch = []
+    for job in jobs:
+        if job.get("posted") and job.get("location"):
+            continue
+        url = job.get("url") or ""
+        m = re.search(r"jobs\.ashbyhq\.com/([^/?#]+)/(" + _UUID_RE.pattern + ")", url)
+        if m:
+            info = (ashby_board(m.group(1)) or {}).get(m.group(2))
+            if info:
+                for key in ("posted", "location", "location_detail"):
+                    if not job.get(key):
+                        job[key] = info.get(key)
+                continue
+        if url.startswith("http"):
+            to_fetch.append(job)
+
+    for job, details in zip(to_fetch, _PROBE_POOL.map(_job_page_details,
+                                                     [j["url"] for j in to_fetch])):
+        for key, value in details.items():
+            if value and not job.get(key):
+                job[key] = value
+    return jobs
+
+
+# Map-pin icons that sites put next to a job's location: Lucide's "map-pin"
+# class, or the path data of the Lucide and Heroicons location pins.
+_PIN_CLASS_RE = re.compile(r"map-?pin|location|marker", re.IGNORECASE)
+_PIN_PATH_PREFIXES = ("M20 10c0 4.993", "M17.657 16.657")
+_LOCATION_CLASS_RE = re.compile(r"\blocation\b|job-?location|posting-?location",
+                                re.IGNORECASE)
+# A job's details line, e.g. "Full-Time | On-Site | Boston, MA"
+_META_CLASS_RE = re.compile(r"\bmeta\b|-meta\b|\bdetails?\b", re.IGNORECASE)
+_META_SPLIT_RE = re.compile(r"\s*[|·•]\s*")
+_PLACE_RE = re.compile(r"^[A-Z][\w.' -]+, ?[A-Z][\w. ]+(?: ?\(.*\))?$")
+_WORKPLACE_RE = re.compile(r"^(remote|on-?site|hybrid)$", re.IGNORECASE)
+
+
+def _card_locations(title_tag):
+    """
+    Find the location(s) shown on a job's card in a generic careers page:
+    text next to a map-pin icon, in an element whose class names a location,
+    or in a details line like "Full-Time | On-Site | Boston, MA" (classed as
+    such, or the line right after the title).
+    The card is the nearest ancestor of the title that holds no other job
+    title of the same kind, so one job never picks up a neighbour's location.
+    Returns location_fields() for what it finds.
+    """
+    card = title_tag
+    for _ in range(4):
+        parent = card.parent
+        if parent is None or parent.name in ("body", "html"):
+            break
+        if len(parent.find_all(title_tag.name)) > 1:
+            break
+        card = parent
+
+    locations = []
+    for svg in card.find_all("svg"):
+        cls = " ".join(svg.get("class") or [])
+        path = svg.find("path")
+        d = (path.get("d") or "") if path else ""
+        if _PIN_CLASS_RE.search(cls) or d.startswith(_PIN_PATH_PREFIXES):
+            locations.append(svg.parent.get_text(" ", strip=True))
+    if not locations:
+        for el in card.find_all(class_=_LOCATION_CLASS_RE):
+            if not el.find(class_=_LOCATION_CLASS_RE):
+                locations.append(el.get_text(" ", strip=True))
+
+    workplace = None
+    if not locations:
+        # Details lines: elements classed as such, or the line right after
+        # the title when it is separator-delimited
+        meta = [el for el in card.find_all(class_=_META_CLASS_RE)
+                if not el.find(class_=_META_CLASS_RE)]
+        nxt = title_tag.find_next_sibling()
+        if nxt is not None and _META_SPLIT_RE.search(nxt.get_text(" ", strip=True)):
+            meta.append(nxt)
+        for el in meta:
+            for part in _META_SPLIT_RE.split(el.get_text(" ", strip=True)):
+                if _PLACE_RE.match(part):
+                    locations.append(part)
+                elif _WORKPLACE_RE.match(part):
+                    workplace = part
+    return location_fields([l for l in locations if l and len(l) <= 60], workplace)
 
 
 # ---------------------------------------------------------------------------
@@ -657,12 +1051,15 @@ def extract_jobs_from_html(url, soup=None):
             text = text[:m.start()]
         return text.strip(" ,;-")
 
-    def add_job(title, href=None):
+    def add_job(title, href=None, tag=None):
         title = clean_title(title.strip())
         if title and title.lower() not in seen_titles and is_job_title(title):
             seen_titles.add(title.lower())
             full_url = urljoin(url, href) if href else None
-            jobs.append({"title": title, "url": full_url})
+            job = {"title": title, "url": full_url}
+            if tag is not None:
+                job.update(_card_locations(tag))
+            jobs.append(job)
 
     # Step 1: Link-based extraction within career sections
     sections = find_career_sections(soup)
@@ -691,7 +1088,7 @@ def extract_jobs_from_html(url, soup=None):
                     re.IGNORECASE,
                 ))
                 title = title_el.get_text(strip=True) if title_el else a.get_text(strip=True)
-            add_job(title, href)
+            add_job(title, href, tag=a)
 
     _CTA_TEXTS = {
         "learn more", "apply", "apply now", "view job", "view role",
@@ -748,7 +1145,7 @@ def extract_jobs_from_html(url, soup=None):
                 # when there's no accompanying link to anchor the result.
                 if tag.name == "p" and not href and not STRONG_KEYWORD_RE.search(title):
                     continue
-                add_job(title, href=href)
+                add_job(title, href=href, tag=tag)
 
         # Step 2b: Some sites put job titles in <div> or <span> leaf nodes rather
         # than headings (e.g. Webflow-generated class names like "text-block-8").
@@ -762,14 +1159,14 @@ def extract_jobs_from_html(url, soup=None):
                         continue
                     title = tag.get_text(strip=True)
                     href = find_job_url_near(tag)
-                    add_job(title, href=href)
+                    add_job(title, href=href, tag=tag)
 
     # Step 3: Whole-page fallback — only if actual career sections were identified.
     # Without identified sections, a full-page scan produces too many false positives.
     if len(jobs) < 2 and have_career_sections:
         for tag in soup.find_all(["li", "h2", "h3"]):
             title = tag.get_text(strip=True)
-            add_job(title, href=find_job_url_near(tag))
+            add_job(title, href=find_job_url_near(tag), tag=tag)
 
     # Sanity check: if every result lacks a URL, we've likely scraped a
     # marketing/culture page rather than an actual job listing. Apply stricter
@@ -864,15 +1261,10 @@ def detect_embedded_job_board(careers_url):
 # Playwright fallback for JS-rendered / Cloudflare-protected pages
 # ---------------------------------------------------------------------------
 
-def extract_jobs_with_playwright(url):
-    """
-    Fetch a page using a real browser (Playwright) and extract jobs from the
-    fully-rendered HTML. Used as a fallback when requests-based scraping
-    returns nothing — covers Cloudflare-protected boards, Next.js/React SPAs,
-    and any other board we haven't seen before.
-    """
+def render_with_playwright(url):
+    """Fetch a page using a real browser (Playwright). Returns HTML or None."""
     if not PLAYWRIGHT_AVAILABLE:
-        return []
+        return None
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
@@ -888,10 +1280,43 @@ def extract_jobs_with_playwright(url):
             page.goto(url, wait_until="networkidle", timeout=30_000)
             html = page.content()
             browser.close()
-        soup = BeautifulSoup(html, "lxml")
-        return extract_jobs_from_html(url, soup=soup)
+        return html
     except Exception:
+        return None
+
+
+def extract_jobs_with_playwright(url):
+    """
+    Extract jobs from the fully-rendered HTML of a page. Used as a fallback
+    when requests-based scraping returns nothing — covers Cloudflare-protected
+    boards, Next.js/React SPAs, and any other board we haven't seen before.
+    """
+    html = render_with_playwright(url)
+    if html is None:
         return []
+    return extract_jobs_from_html(url, soup=BeautifulSoup(html, "lxml"))
+
+
+def extract_gusto(url):
+    """
+    Gusto job board (Cloudflare-protected, so rendered with Playwright).
+    Each posting is a card link: an <h3> title, then a <p> with the location.
+    """
+    html = render_with_playwright(url)
+    if html is None:
+        return []
+    jobs = []
+    for a in BeautifulSoup(html, "lxml").select('a[href*="/postings/"]'):
+        title = a.find("h3")
+        if title is None:
+            continue
+        loc = a.find("p")
+        jobs.append({
+            "title": title.get_text(" ", strip=True),
+            "url": urljoin(url, a["href"]),
+            **location_fields([loc.get_text(" ", strip=True) if loc else None]),
+        })
+    return jobs
 
 
 # ---------------------------------------------------------------------------
@@ -938,6 +1363,10 @@ def extract_jobs(careers_url):
     if m:
         return extract_rippling(m.group(1), careers_url)
 
+    # Gusto
+    if "jobs.gusto.com/boards/" in lower:
+        return extract_gusto(careers_url)
+
     # For company-hosted careers pages, scan the page source for embedded job
     # board API/widget references (e.g. Lever embed on a company's own domain).
     embedded = detect_embedded_job_board(careers_url)
@@ -970,7 +1399,8 @@ def extract_jobs(careers_url):
 CSS = """
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: "Avenir", "Avenir Next", -apple-system, BlinkMacSystemFont,
+                 "Segoe UI", Roboto, sans-serif;
     background: #f4f4f4;
     color: #202731;
     line-height: 1.6;
@@ -997,6 +1427,8 @@ main { max-width: 960px; margin: 32px auto; padding: 0 16px; }
     color: #202731;
 }
 .summary strong { color: #D90B1C; }
+.summary .disclaimer { font-size: 0.8rem; color: #666; margin-top: 6px; }
+.summary .intro { font-size: 0.95rem; margin-top: 12px; }
 .company {
     background: #fff;
     border: 1px solid #ddd;
@@ -1006,20 +1438,59 @@ main { max-width: 960px; margin: 32px auto; padding: 0 16px; }
 }
 .company-header {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 12px;
     margin-bottom: 8px;
 }
-.company-name { font-size: 1rem; font-weight: 700; }
-.company-name a { color: #202731; text-decoration: none; }
-.company-name a:hover { color: #D90B1C; }
-.careers-link { font-size: 0.8rem; color: #666; }
-.careers-link a { color: #D90B1C; text-decoration: none; }
-.careers-link a:hover { text-decoration: underline; }
-.job-count { font-size: 0.8rem; color: #888; margin-left: auto; }
+.company-name { font-size: 2rem; line-height: 1.2; font-weight: 700; margin-left: auto; text-align: right; }
+.company-name a { color: #D90B1C; text-decoration: none; }
+.company-logo-link { display: inline-flex; }
+.company-logo { height: 56px; max-width: 240px; object-fit: contain; }
+.company-desc { font-size: 0.85rem; color: #555; margin-bottom: 10px; }
+.company-name a:hover { text-decoration: underline; }
+.job-count { font-size: 1rem; color: #888; white-space: nowrap; }
 ul.jobs { list-style: none; padding-left: 8px; }
-ul.jobs li { padding: 4px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+ul.jobs li {
+    display: grid;
+    grid-template-columns: 1fr 6.5em 8em;
+    gap: 12px;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+ul.jobs li .job-date, ul.jobs li .job-location {
+    text-align: right;
+    font-size: 0.8rem;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+@media (max-width: 560px) {
+    .company-name { font-size: 1.4rem; }
+    .company-logo { height: 40px; max-width: 160px; }
+    ul.jobs li { grid-template-columns: 1fr 8em; gap: 0 12px; }
+    ul.jobs li .job-title { grid-column: 1 / -1; }
+}
 ul.jobs li:last-child { border-bottom: none; }
+.sort-btn {
+    all: unset;
+    cursor: pointer;
+    text-align: right;
+}
+.sort-btn:hover, .sort-btn[data-dir] { color: #D90B1C; }
+.sort-btn:focus-visible { outline: 2px solid #D90B1C; outline-offset: 2px; }
+.sort-btn[data-dir="asc"]::after { content: " ▲"; }
+.sort-btn[data-dir="desc"]::after { content: " ▼"; }
+ul.jobs li.jobs-head {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: right;
+}
 ul.jobs li a { color: #D90B1C; text-decoration: none; }
 ul.jobs li a:hover { text-decoration: underline; }
 ul.jobs li .no-link { color: #333; }
@@ -1028,6 +1499,39 @@ ul.jobs li .no-link { color: #333; }
 
 LOGO_URL = ("https://www.massrobotics.org/wp-content/uploads/2022/07/"
             "massrobotics-logo.jpg")
+
+
+SORT_SCRIPT = """<script>
+// Clicking "Posted" or "Location" sorts every company's job list by that
+// column; clicking it again reverses the order. Jobs missing the value
+// always go last. Posted starts newest-first, Location A-Z.
+document.addEventListener("click", function (e) {
+  var btn = e.target.closest(".sort-btn");
+  if (!btn) return;
+  var key = btn.dataset.key;
+  var dir = btn.dataset.dir === "desc" ? "asc"
+          : btn.dataset.dir === "asc" ? "desc"
+          : key === "posted" ? "desc" : "asc";
+  document.querySelectorAll(".sort-btn").forEach(function (b) {
+    if (b.dataset.key === key) b.dataset.dir = dir;
+    else delete b.dataset.dir;
+  });
+  function value(li) {
+    return key === "posted" ? (li.dataset.posted || "")
+         : li.querySelector(".job-location").textContent.trim();
+  }
+  document.querySelectorAll("ul.jobs").forEach(function (ul) {
+    var rows = Array.from(ul.querySelectorAll("li:not(.jobs-head)"));
+    rows.sort(function (a, b) {
+      var x = value(a), y = value(b);
+      if (!x || !y) return (x ? 0 : 1) - (y ? 0 : 1);
+      var c = x.localeCompare(y);
+      return dir === "asc" ? c : -c;
+    });
+    rows.forEach(function (li) { ul.appendChild(li); });
+  });
+});
+</script>"""
 
 
 def generate_html(results, output_paths=OUTPUT_FILES):
@@ -1060,47 +1564,77 @@ def generate_html(results, output_paths=OUTPUT_FILES):
         "<main>",
         '<div class="summary">',
         f"  <strong>{total_jobs}</strong> open roles found",
+        '  <p class="disclaimer">We never charge for listing jobs. MassRobotics is '
+        "not a job board or recruiter. These listings are all scraped from public "
+        "data; we offer no guarantee on the accuracy of the data.</p>",
+        '  <p class="intro">MassRobotics resident startups are dynamic companies '
+        "dedicated to advancing robotics and supporting technologies. They aim to "
+        "transform how we live, work, and play through innovative solutions. "
+        "Joining MassRobotics means becoming part of a global community of experts "
+        "and like-minded entrepreneurs. These startups cover a range of stages, "
+        "from concept to manufacturing, and focus on robotics, Physical AI, and "
+        "connected devices.</p>",
+        '  <p class="intro">See below for opportunities across the globe.</p>',
         "</div>",
     ]
 
     for r in sorted(with_jobs, key=lambda x: x["name"].lower()):
         lines.append('<div class="company">')
         lines.append('  <div class="company-header">')
-        lines.append(
-            f'    <span class="company-name"><a href="{r["site"]}" target="_blank">'
-            f'{_esc(r["name"])}</a></span>'
-        )
-        if r.get("careers_url"):
+        link = r.get("careers_url") or r["site"]
+        if r.get("logo"):
             lines.append(
-                f'    <span class="careers-link">'
-                f'<a href="{r["careers_url"]}" target="_blank">careers page</a></span>'
+                f'    <a class="company-logo-link" href="{link}" target="_blank">'
+                f'<img class="company-logo" src="{_esc(r["logo"])}" '
+                f'alt="{_esc(r["name"])}" loading="lazy"></a>'
             )
+        lines.append(
+            f'    <span class="company-name"><a href="{link}" target="_blank">'
+            f'{_esc(r["name"])} career page</a></span>'
+        )
         lines.append(
             f'    <span class="job-count">{len(r["jobs"])} role'
             f'{"s" if len(r["jobs"]) != 1 else ""}</span>'
         )
         lines.append("  </div>")
+        if r.get("description"):
+            lines.append(f'  <p class="company-desc">{_esc(r["description"])}</p>')
         lines.append('  <ul class="jobs">')
+        lines.append('    <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>')
         for job in r["jobs"]:
+            posted = _fmt_date(job.get("posted"))
+            location = job.get("location") or ""
+            detail = job.get("location_detail") or location
+            meta = (
+                f'<span class="job-date">{posted}</span>'
+                f'<span class="job-location" title="{_esc(detail)}">'
+                f'{_esc(location)}</span>'
+            )
             if job.get("url"):
-                lines.append(
-                    f'    <li><a href="{job["url"]}" target="_blank">'
-                    f'{_esc(job["title"])}</a></li>'
-                )
+                title = (f'<a class="job-title" href="{job["url"]}" target="_blank">'
+                         f'{_esc(job["title"])}</a>')
             else:
-                lines.append(
-                    f'    <li><span class="no-link">{_esc(job["title"])}</span></li>'
-                )
+                title = f'<span class="job-title no-link">{_esc(job["title"])}</span>'
+            lines.append(f'    <li data-posted="{job.get("posted") or ""}">{title}{meta}</li>')
         lines.append("  </ul>")
         lines.append("</div>")
 
-    lines += ["</main>", "</body>", "</html>"]
+    lines += ["</main>", SORT_SCRIPT, "</body>", "</html>"]
 
     html = "\n".join(lines)
     for output_path in output_paths:
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(html)
         print(f"Written to {output_path}")
+
+
+def _fmt_date(iso_date):
+    """'2026-10-05' -> 'Oct 5, 2026'; '' if missing or unparseable."""
+    try:
+        d = datetime.strptime(iso_date, "%Y-%m-%d")
+    except (TypeError, ValueError):
+        return ""
+    return f"{d:%b} {d.day}, {d.year}"
 
 
 def _esc(text):
@@ -1134,7 +1668,7 @@ def process_resident(resident, index, total):
         with _PRINT_LOCK:
             print(f"  -> careers: {careers_url}")
         time.sleep(REQUEST_DELAY)
-        jobs = extract_jobs(careers_url)
+        jobs = enrich_jobs(extract_jobs(careers_url))
         with _PRINT_LOCK:
             if jobs:
                 print(f"  -> {len(jobs)} job(s) found")
@@ -1148,13 +1682,55 @@ def process_resident(resident, index, total):
     return {
         "name": name,
         "site": site,
+        "logo": resident.get("logo"),
+        "description": resident.get("description"),
         "careers_url": careers_url,
         "jobs": jobs,
     }
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--limit", type=int, metavar="N",
+        help="only process the first N residents (for quick test runs)",
+    )
+    parser.add_argument(
+        "--only", action="append", metavar="NAME",
+        help="only process residents whose name contains NAME "
+             "(case-insensitive; repeatable)",
+    )
+    parser.add_argument(
+        "--no-playwright", action="store_true",
+        help="skip the slow headless-browser fallback",
+    )
+    parser.add_argument(
+        "--output", action="append", metavar="FILE",
+        help="file(s) to write (repeatable). Defaults to jobs.html and "
+             "index.html, or test.html when --limit/--only is used so a "
+             "partial run never overwrites the real page.",
+    )
+    return parser.parse_args()
+
+
 def main():
+    global PLAYWRIGHT_AVAILABLE
+    args = parse_args()
+    if args.no_playwright:
+        PLAYWRIGHT_AVAILABLE = False
+
     residents = get_residents()
+    if args.only:
+        needles = [n.lower() for n in args.only]
+        residents = [r for r in residents
+                     if any(n in r["name"].lower() for n in needles)]
+    if args.limit is not None:
+        residents = residents[:args.limit]
+    partial = bool(args.only or args.limit is not None)
+    output_paths = args.output or (["test.html"] if partial else OUTPUT_FILES)
+    if partial:
+        print(f"Partial run: processing {len(residents)} resident(s).")
+
     total = len(residents)
     results = [None] * total
 
@@ -1177,6 +1753,8 @@ def main():
                 results[idx] = {
                     "name": name,
                     "site": residents[idx]["url"],
+                    "logo": residents[idx].get("logo"),
+                    "description": residents[idx].get("description"),
                     "careers_url": None,
                     "jobs": [],
                 }
@@ -1195,7 +1773,7 @@ def main():
         for r in sorted(needs_check, key=lambda x: x["name"]):
             print(f"  {r['name']}: {r['careers_url']}")
 
-    generate_html(results)
+    generate_html(results, output_paths)
 
 
 if __name__ == "__main__":
