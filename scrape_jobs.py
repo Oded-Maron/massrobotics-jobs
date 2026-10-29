@@ -765,7 +765,8 @@ def _job_page_details(url):
 def enrich_jobs(jobs):
     """
     Fill in missing posting dates and locations. Jobs on an Ashby board are
-    matched against its API; others have their own page read in parallel.
+    matched against its API (which also supplies their title); others have
+    their own page read in parallel.
     """
     to_fetch = []
     for job in jobs:
@@ -776,6 +777,9 @@ def enrich_jobs(jobs):
         if m:
             info = (ashby_board(m.group(1)) or {}).get(m.group(2))
             if info:
+                # The board's own title is clean; careers pages sometimes run
+                # department, city and salary into the link text
+                job["title"] = info["title"]
                 for key in ("posted", "location", "location_detail"):
                     if not job.get(key):
                         job[key] = info.get(key)
@@ -1398,123 +1402,253 @@ def extract_jobs(careers_url):
 
 CSS = """
 * { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --red: #D90B1C;
+    --navy: #202731;
+    --paper: #F0F0EB;
+    --muted: #6B7079;
+    --rule: #E4E4DE;
+    --display: "Lato", "Avenir", "Avenir Next", -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, sans-serif;
+}
 body {
     font-family: "Avenir", "Avenir Next", -apple-system, BlinkMacSystemFont,
                  "Segoe UI", Roboto, sans-serif;
-    background: #f4f4f4;
-    color: #202731;
+    background: var(--paper);
+    color: var(--navy);
     line-height: 1.6;
 }
-header {
+[hidden] { display: none !important; }
+
+/* Top bar: logo, plus a square brand button like massrobotics.org's nav */
+.topbar {
     background: #fff;
-    border-bottom: 3px solid #D90B1C;
-    padding: 16px 32px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 32px;
 }
-header img { height: 44px; }
-header .header-text h1 { font-size: 1.2rem; font-weight: 700; color: #202731; }
-header .header-text p  { font-size: 0.8rem; color: #666; margin-top: 2px; }
-main { max-width: 960px; margin: 32px auto; padding: 0 16px; }
-[hidden] { display: none !important; }
-.search { display: flex; gap: 8px; margin-bottom: 16px; }
+.topbar > a:first-child { min-width: 0; }
+.topbar img { height: 36px; max-width: 100%; object-fit: contain; display: block; }
+.brand-btn {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff;
+    background: var(--red);
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+.brand-btn:hover { background: #B30916; }
+
+/* Hero: the MassRobotics lobby under a navy wash, with a giant job count */
+.hero {
+    background:
+        linear-gradient(rgba(32, 39, 49, 0.9), rgba(32, 39, 49, 0.78)),
+        url("https://www.massrobotics.org/wp-content/uploads/2025/03/MassRobotics-space-picture-1500x1000.jpg")
+        center / cover;
+    color: #fff;
+    padding: 64px 16px 120px;
+    border-top: 6px solid var(--red);
+}
+.hero-inner { max-width: 960px; margin: 0 auto; }
+.eyebrow {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 12px;
+}
+.hero h1 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(2rem, 5.5vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+}
+.hero-count {
+    display: block;
+    font-weight: 900;
+    font-size: clamp(3.6rem, 13vw, 8rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--red);
+}
+.hero-stats {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+.hero-stats strong { font-weight: 900; }
+.hero-intro {
+    max-width: 640px;
+    margin-top: 16px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+main { max-width: 960px; margin: -72px auto 48px; padding: 0 16px; position: relative; }
+
+/* Search card overlapping the hero */
+.search-card {
+    background: #fff;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(32, 39, 49, 0.12);
+    border-bottom: 4px solid var(--red);
+}
+.search { display: flex; gap: 8px; }
 .search input {
     flex: 1;
     min-width: 0;
     font: inherit;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #fff;
+    font-size: 1.05rem;
+    padding: 12px 14px 12px 42px;
+    border: 1px solid #C9C9C2;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%236B7079' stroke-width='2' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") 14px center no-repeat;
 }
-.search input:focus { outline: 2px solid #D90B1C; outline-offset: -1px; border-color: #D90B1C; }
+.search input:focus { outline: 2px solid var(--red); outline-offset: -1px; border-color: var(--red); }
 .search button {
-    font: inherit;
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #D90B1C;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0 22px;
+    border: 2px solid var(--red);
     cursor: pointer;
 }
-.search button[type="submit"] { background: #D90B1C; color: #fff; }
-.search .search-clear { background: #fff; color: #D90B1C; }
-.summary {
-    background: #fff;
-    border-radius: 6px;
-    padding: 14px 20px;
-    margin-bottom: 24px;
-    border-left: 4px solid #D90B1C;
-    font-size: 1rem;
-    color: #202731;
+.search button[type="submit"] { background: var(--red); color: #fff; }
+.search button[type="submit"]:hover { background: #B30916; border-color: #B30916; }
+.search .search-clear { background: #fff; color: var(--red); }
+.summary-count {
+    display: block;
+    font-family: var(--display);
+    font-size: 1.05rem;
+    margin-top: 16px;
 }
-.summary strong { color: #D90B1C; }
-.summary .disclaimer { font-size: 0.8rem; color: #666; margin-top: 6px; }
-.summary .intro { font-size: 0.95rem; margin-top: 12px; }
+.summary-count strong { color: var(--red); font-weight: 900; }
+.disclaimer { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+
+/* Company cards */
 .company {
     background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    margin-bottom: 14px;
-    padding: 14px 18px;
+    margin-bottom: 20px;
+    padding: 24px 28px 12px;
+    box-shadow: 0 1px 2px rgba(32, 39, 49, 0.06);
 }
 .company-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 16px;
+    margin-bottom: 12px;
 }
-.company-name { font-size: 2rem; line-height: 1.2; font-weight: 700; margin-left: auto; text-align: right; }
-.company-name a { color: #D90B1C; text-decoration: none; }
 .company-logo-link { display: inline-flex; }
 .company-logo { height: 56px; max-width: 240px; object-fit: contain; }
-.company-desc { font-size: 0.85rem; color: #555; margin-bottom: 10px; }
+.company-name {
+    font-family: var(--display);
+    font-size: 2rem;
+    line-height: 1.15;
+    font-weight: 700;
+    margin-left: auto;
+    text-align: right;
+}
+.company-name a { color: var(--red); text-decoration: none; }
 .company-name a:hover { text-decoration: underline; }
-.job-count { font-size: 1rem; color: #888; white-space: nowrap; }
-ul.jobs { list-style: none; padding-left: 8px; }
+.job-count {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--paper);
+    padding: 4px 10px;
+}
+.company-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: 16px; max-width: 760px; }
+
+/* Job rows: roomy, ruled, with an arrow that appears on hover */
+ul.jobs { list-style: none; }
 ul.jobs li {
     display: grid;
-    grid-template-columns: 1fr 6.5em 8em;
-    gap: 12px;
+    grid-template-columns: 1fr 7em 8.5em;
+    gap: 16px;
     align-items: baseline;
-    padding: 4px 0;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 0.9rem;
+    padding: 12px 8px;
+    margin: 0 -8px;
+    border-top: 1px solid var(--rule);
 }
+ul.jobs li:not(.jobs-head):hover { background: #FAFAF7; }
+.job-title { font-size: 1.05rem; font-weight: 600; }
+ul.jobs li a { color: var(--red); text-decoration: none; }
+ul.jobs li a::after { content: " \u2192"; opacity: 0; transition: opacity 0.15s; }
+ul.jobs li a:hover::after, ul.jobs li a:focus-visible::after { opacity: 1; }
+ul.jobs li a:hover { text-decoration: underline; }
+ul.jobs li .no-link { color: var(--navy); }
 ul.jobs li .job-date, ul.jobs li .job-location {
     text-align: right;
-    font-size: 0.8rem;
-    color: #888;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-@media (max-width: 560px) {
-    .company-name { font-size: 1.4rem; }
-    .company-logo { height: 40px; max-width: 160px; }
-    ul.jobs li { grid-template-columns: 1fr 8em; gap: 0 12px; }
-    ul.jobs li .job-title { grid-column: 1 / -1; }
+ul.jobs li.jobs-head {
+    border-top: none;
+    padding-bottom: 4px;
+    font-family: var(--display);
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: right;
 }
-ul.jobs li:last-child { border-bottom: none; }
 .sort-btn {
     all: unset;
     cursor: pointer;
     text-align: right;
 }
-.sort-btn:hover, .sort-btn[data-dir] { color: #D90B1C; }
-.sort-btn:focus-visible { outline: 2px solid #D90B1C; outline-offset: 2px; }
-.sort-btn[data-dir="asc"]::after { content: " ▲"; }
-.sort-btn[data-dir="desc"]::after { content: " ▼"; }
-ul.jobs li.jobs-head {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-align: right;
+.sort-btn:hover, .sort-btn[data-dir] { color: var(--red); }
+.sort-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.sort-btn[data-dir="asc"]::after { content: " \u25B2"; }
+.sort-btn[data-dir="desc"]::after { content: " \u25BC"; }
+
+footer {
+    background: var(--navy);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 28px 16px;
+    border-top: 6px solid var(--red);
 }
-ul.jobs li a { color: #D90B1C; text-decoration: none; }
-ul.jobs li a:hover { text-decoration: underline; }
-ul.jobs li .no-link { color: #333; }
+footer a { color: #fff; }
+
+@media (max-width: 560px) {
+    .topbar { padding: 12px 16px; }
+    .topbar img { height: 22px; }
+    .brand-btn { font-size: 0.7rem; padding: 8px 10px; }
+    .hero { padding: 40px 16px 104px; }
+    .search { flex-wrap: wrap; }
+    .search input { flex-basis: 100%; }
+    .search button { flex: 1; padding: 10px; }
+    .search-card { padding: 16px; }
+    .company { padding: 16px 16px 8px; }
+    .company-header { flex-wrap: wrap; }
+    .company-name { font-size: 1.4rem; flex-basis: 100%; margin-left: 0; text-align: left; }
+    .company-logo { height: 40px; max-width: 160px; }
+    ul.jobs li { grid-template-columns: 1fr 8.5em; gap: 0 12px; }
+    ul.jobs li .job-title { grid-column: 1 / -1; }
+}
 """
 
 
@@ -1658,7 +1792,9 @@ def generate_html(results, output_paths=OUTPUT_FILES):
     with_jobs = [r for r in results if r["jobs"]]
 
     total_jobs = sum(len(r["jobs"]) for r in with_jobs)
-    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    now = datetime.now()
+    timestamp = now.strftime("%Y-%m-%d %H:%M:%S")
+    updated = f"{now:%b} {now.day}, {now.year}"
 
     lines = [
         "<!DOCTYPE html>",
@@ -1667,36 +1803,45 @@ def generate_html(results, output_paths=OUTPUT_FILES):
         '<meta charset="UTF-8">',
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
         "<title>MassRobotics Resident Jobs</title>",
+        '<link rel="preconnect" href="https://fonts.googleapis.com">',
+        '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+        '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?'
+        'family=Lato:wght@300;400;700;900&display=swap">',
         f"<style>{CSS}</style>",
         "</head>",
         "<body>",
-        "<header>",
-        f'  <img src="{LOGO_URL}" alt="MassRobotics">',
-        '  <div class="header-text">',
-        "    <h1>Resident Jobs</h1>",
-        f"    <p>Last updated: {timestamp}</p>",
-        "  </div>",
+        '<header class="topbar">',
+        f'  <a href="https://www.massrobotics.org/"><img src="{LOGO_URL}" alt="MassRobotics"></a>',
+        '  <a class="brand-btn" href="https://www.massrobotics.org/">massrobotics.org</a>',
         "</header>",
-        "<main>",
-        '<form class="search" role="search">',
-        '  <input type="search" id="job-search" placeholder="Search job titles or locations, e.g. engineer, Boston, remote" aria-label="Search job titles or locations" autocomplete="off">',
-        '  <button type="submit">Search</button>',
-        '  <button type="button" class="search-clear" hidden>Clear</button>',
-        '</form>',
-        '<div class="summary">',
-        f'  <span class="summary-count" aria-live="polite">'
-        f"<strong>{total_jobs}</strong> open roles found</span>",
-        '  <p class="disclaimer">We never charge for listing jobs. MassRobotics is '
-        "not a job board or recruiter. These listings are all scraped from public "
-        "data; we offer no guarantee on the accuracy of the data.</p>",
-        '  <p class="intro">MassRobotics resident startups are dynamic companies '
+        '<section class="hero">',
+        '  <div class="hero-inner">',
+        '    <p class="eyebrow">Resident Startup Jobs</p>',
+        f'    <h1><span class="hero-count">{total_jobs} jobs</span>'
+        "at MassRobotics resident startups</h1>",
+        f'    <p class="hero-stats"><strong>{total_jobs}</strong> jobs &middot; '
+        f"<strong>{len(with_jobs)}</strong> companies &middot; updated {updated}</p>",
+        '    <p class="hero-intro">MassRobotics resident startups are dynamic companies '
         "dedicated to advancing robotics and supporting technologies. They aim to "
         "transform how we live, work, and play through innovative solutions. "
         "Joining MassRobotics means becoming part of a global community of experts "
         "and like-minded entrepreneurs. These startups cover a range of stages, "
         "from concept to manufacturing, and focus on robotics, Physical AI, and "
-        "connected devices.</p>",
-        '  <p class="intro">See below for opportunities across the globe.</p>',
+        "connected devices. See below for opportunities across the globe.</p>",
+        "  </div>",
+        "</section>",
+        "<main>",
+        '<div class="search-card">',
+        '  <form class="search" role="search">',
+        '    <input type="search" id="job-search" placeholder="Search job titles or locations, e.g. engineer, Boston, remote" aria-label="Search job titles or locations" autocomplete="off">',
+        '    <button type="submit">Search</button>',
+        '    <button type="button" class="search-clear" hidden>Clear</button>',
+        "  </form>",
+        f'  <span class="summary-count" aria-live="polite">'
+        f"<strong>{total_jobs}</strong> open roles found</span>",
+        '  <p class="disclaimer">We never charge for listing jobs. MassRobotics is '
+        "not a job board or recruiter. These listings are all scraped from public "
+        "data; we offer no guarantee on the accuracy of the data.</p>",
         "</div>",
     ]
 
@@ -1741,7 +1886,17 @@ def generate_html(results, output_paths=OUTPUT_FILES):
         lines.append("  </ul>")
         lines.append("</div>")
 
-    lines += ["</main>", SORT_SCRIPT, SEARCH_SCRIPT, "</body>", "</html>"]
+    lines += [
+        "</main>",
+        "<footer>",
+        '  <a href="https://www.massrobotics.org/">MassRobotics</a> &middot; '
+        f"Resident startup jobs &middot; Last updated {timestamp}",
+        "</footer>",
+        SORT_SCRIPT,
+        SEARCH_SCRIPT,
+        "</body>",
+        "</html>",
+    ]
 
     html = "\n".join(lines)
     for output_path in output_paths:

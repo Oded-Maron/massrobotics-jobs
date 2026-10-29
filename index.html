@@ -4,146 +4,282 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MassRobotics Resident Jobs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+    --red: #D90B1C;
+    --navy: #202731;
+    --paper: #F0F0EB;
+    --muted: #6B7079;
+    --rule: #E4E4DE;
+    --display: "Lato", "Avenir", "Avenir Next", -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, sans-serif;
+}
 body {
     font-family: "Avenir", "Avenir Next", -apple-system, BlinkMacSystemFont,
                  "Segoe UI", Roboto, sans-serif;
-    background: #f4f4f4;
-    color: #202731;
+    background: var(--paper);
+    color: var(--navy);
     line-height: 1.6;
 }
-header {
+[hidden] { display: none !important; }
+
+/* Top bar: logo, plus a square brand button like massrobotics.org's nav */
+.topbar {
     background: #fff;
-    border-bottom: 3px solid #D90B1C;
-    padding: 16px 32px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 32px;
 }
-header img { height: 44px; }
-header .header-text h1 { font-size: 1.2rem; font-weight: 700; color: #202731; }
-header .header-text p  { font-size: 0.8rem; color: #666; margin-top: 2px; }
-main { max-width: 960px; margin: 32px auto; padding: 0 16px; }
-[hidden] { display: none !important; }
-.search { display: flex; gap: 8px; margin-bottom: 16px; }
+.topbar > a:first-child { min-width: 0; }
+.topbar img { height: 36px; max-width: 100%; object-fit: contain; display: block; }
+.brand-btn {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff;
+    background: var(--red);
+    padding: 10px 16px;
+    white-space: nowrap;
+}
+.brand-btn:hover { background: #B30916; }
+
+/* Hero: the MassRobotics lobby under a navy wash, with a giant job count */
+.hero {
+    background:
+        linear-gradient(rgba(32, 39, 49, 0.9), rgba(32, 39, 49, 0.78)),
+        url("https://www.massrobotics.org/wp-content/uploads/2025/03/MassRobotics-space-picture-1500x1000.jpg")
+        center / cover;
+    color: #fff;
+    padding: 64px 16px 120px;
+    border-top: 6px solid var(--red);
+}
+.hero-inner { max-width: 960px; margin: 0 auto; }
+.eyebrow {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.75);
+    margin-bottom: 12px;
+}
+.hero h1 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: clamp(2rem, 5.5vw, 3.6rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+}
+.hero-count {
+    display: block;
+    font-weight: 900;
+    font-size: clamp(3.6rem, 13vw, 8rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--red);
+}
+.hero-stats {
+    font-family: var(--display);
+    font-size: 1.1rem;
+    margin-top: 20px;
+    color: rgba(255, 255, 255, 0.9);
+}
+.hero-stats strong { font-weight: 900; }
+.hero-intro {
+    max-width: 640px;
+    margin-top: 16px;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.82);
+}
+
+main { max-width: 960px; margin: -72px auto 48px; padding: 0 16px; position: relative; }
+
+/* Search card overlapping the hero */
+.search-card {
+    background: #fff;
+    padding: 24px;
+    margin-bottom: 28px;
+    box-shadow: 0 10px 30px rgba(32, 39, 49, 0.12);
+    border-bottom: 4px solid var(--red);
+}
+.search { display: flex; gap: 8px; }
 .search input {
     flex: 1;
     min-width: 0;
     font: inherit;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    background: #fff;
+    font-size: 1.05rem;
+    padding: 12px 14px 12px 42px;
+    border: 1px solid #C9C9C2;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%236B7079' stroke-width='2' stroke-linecap='round' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E") 14px center no-repeat;
 }
-.search input:focus { outline: 2px solid #D90B1C; outline-offset: -1px; border-color: #D90B1C; }
+.search input:focus { outline: 2px solid var(--red); outline-offset: -1px; border-color: var(--red); }
 .search button {
-    font: inherit;
-    padding: 8px 16px;
-    border-radius: 6px;
-    border: 1px solid #D90B1C;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0 22px;
+    border: 2px solid var(--red);
     cursor: pointer;
 }
-.search button[type="submit"] { background: #D90B1C; color: #fff; }
-.search .search-clear { background: #fff; color: #D90B1C; }
-.summary {
-    background: #fff;
-    border-radius: 6px;
-    padding: 14px 20px;
-    margin-bottom: 24px;
-    border-left: 4px solid #D90B1C;
-    font-size: 1rem;
-    color: #202731;
+.search button[type="submit"] { background: var(--red); color: #fff; }
+.search button[type="submit"]:hover { background: #B30916; border-color: #B30916; }
+.search .search-clear { background: #fff; color: var(--red); }
+.summary-count {
+    display: block;
+    font-family: var(--display);
+    font-size: 1.05rem;
+    margin-top: 16px;
 }
-.summary strong { color: #D90B1C; }
-.summary .disclaimer { font-size: 0.8rem; color: #666; margin-top: 6px; }
-.summary .intro { font-size: 0.95rem; margin-top: 12px; }
+.summary-count strong { color: var(--red); font-weight: 900; }
+.disclaimer { font-size: 0.8rem; color: var(--muted); margin-top: 6px; }
+
+/* Company cards */
 .company {
     background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    margin-bottom: 14px;
-    padding: 14px 18px;
+    margin-bottom: 20px;
+    padding: 24px 28px 12px;
+    box-shadow: 0 1px 2px rgba(32, 39, 49, 0.06);
 }
 .company-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 16px;
+    margin-bottom: 12px;
 }
-.company-name { font-size: 2rem; line-height: 1.2; font-weight: 700; margin-left: auto; text-align: right; }
-.company-name a { color: #D90B1C; text-decoration: none; }
 .company-logo-link { display: inline-flex; }
 .company-logo { height: 56px; max-width: 240px; object-fit: contain; }
-.company-desc { font-size: 0.85rem; color: #555; margin-bottom: 10px; }
+.company-name {
+    font-family: var(--display);
+    font-size: 2rem;
+    line-height: 1.15;
+    font-weight: 700;
+    margin-left: auto;
+    text-align: right;
+}
+.company-name a { color: var(--red); text-decoration: none; }
 .company-name a:hover { text-decoration: underline; }
-.job-count { font-size: 1rem; color: #888; white-space: nowrap; }
-ul.jobs { list-style: none; padding-left: 8px; }
+.job-count {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--paper);
+    padding: 4px 10px;
+}
+.company-desc { font-size: 0.9rem; color: var(--muted); margin-bottom: 16px; max-width: 760px; }
+
+/* Job rows: roomy, ruled, with an arrow that appears on hover */
+ul.jobs { list-style: none; }
 ul.jobs li {
     display: grid;
-    grid-template-columns: 1fr 6.5em 8em;
-    gap: 12px;
+    grid-template-columns: 1fr 7em 8.5em;
+    gap: 16px;
     align-items: baseline;
-    padding: 4px 0;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 0.9rem;
+    padding: 12px 8px;
+    margin: 0 -8px;
+    border-top: 1px solid var(--rule);
 }
+ul.jobs li:not(.jobs-head):hover { background: #FAFAF7; }
+.job-title { font-size: 1.05rem; font-weight: 600; }
+ul.jobs li a { color: var(--red); text-decoration: none; }
+ul.jobs li a::after { content: " →"; opacity: 0; transition: opacity 0.15s; }
+ul.jobs li a:hover::after, ul.jobs li a:focus-visible::after { opacity: 1; }
+ul.jobs li a:hover { text-decoration: underline; }
+ul.jobs li .no-link { color: var(--navy); }
 ul.jobs li .job-date, ul.jobs li .job-location {
     text-align: right;
-    font-size: 0.8rem;
-    color: #888;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-@media (max-width: 560px) {
-    .company-name { font-size: 1.4rem; }
-    .company-logo { height: 40px; max-width: 160px; }
-    ul.jobs li { grid-template-columns: 1fr 8em; gap: 0 12px; }
-    ul.jobs li .job-title { grid-column: 1 / -1; }
+ul.jobs li.jobs-head {
+    border-top: none;
+    padding-bottom: 4px;
+    font-family: var(--display);
+    font-size: 0.7rem;
+    font-weight: 900;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: right;
 }
-ul.jobs li:last-child { border-bottom: none; }
 .sort-btn {
     all: unset;
     cursor: pointer;
     text-align: right;
 }
-.sort-btn:hover, .sort-btn[data-dir] { color: #D90B1C; }
-.sort-btn:focus-visible { outline: 2px solid #D90B1C; outline-offset: 2px; }
+.sort-btn:hover, .sort-btn[data-dir] { color: var(--red); }
+.sort-btn:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
 .sort-btn[data-dir="asc"]::after { content: " ▲"; }
 .sort-btn[data-dir="desc"]::after { content: " ▼"; }
-ul.jobs li.jobs-head {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #888;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    text-align: right;
+
+footer {
+    background: var(--navy);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 28px 16px;
+    border-top: 6px solid var(--red);
 }
-ul.jobs li a { color: #D90B1C; text-decoration: none; }
-ul.jobs li a:hover { text-decoration: underline; }
-ul.jobs li .no-link { color: #333; }
+footer a { color: #fff; }
+
+@media (max-width: 560px) {
+    .topbar { padding: 12px 16px; }
+    .topbar img { height: 22px; }
+    .brand-btn { font-size: 0.7rem; padding: 8px 10px; }
+    .hero { padding: 40px 16px 104px; }
+    .search { flex-wrap: wrap; }
+    .search input { flex-basis: 100%; }
+    .search button { flex: 1; padding: 10px; }
+    .search-card { padding: 16px; }
+    .company { padding: 16px 16px 8px; }
+    .company-header { flex-wrap: wrap; }
+    .company-name { font-size: 1.4rem; flex-basis: 100%; margin-left: 0; text-align: left; }
+    .company-logo { height: 40px; max-width: 160px; }
+    ul.jobs li { grid-template-columns: 1fr 8.5em; gap: 0 12px; }
+    ul.jobs li .job-title { grid-column: 1 / -1; }
+}
 </style>
 </head>
 <body>
-<header>
-  <img src="https://www.massrobotics.org/wp-content/uploads/2022/07/massrobotics-logo.jpg" alt="MassRobotics">
-  <div class="header-text">
-    <h1>Resident Jobs</h1>
-    <p>Last updated: 2026-10-28 18:33:52</p>
-  </div>
+<header class="topbar">
+  <a href="https://www.massrobotics.org/"><img src="https://www.massrobotics.org/wp-content/uploads/2022/07/massrobotics-logo.jpg" alt="MassRobotics"></a>
+  <a class="brand-btn" href="https://www.massrobotics.org/">massrobotics.org</a>
 </header>
+<section class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Resident Startup Jobs</p>
+    <h1><span class="hero-count">341 jobs</span>at MassRobotics resident startups</h1>
+    <p class="hero-stats"><strong>341</strong> jobs &middot; <strong>22</strong> companies &middot; updated Oct 29, 2026</p>
+    <p class="hero-intro">MassRobotics resident startups are dynamic companies dedicated to advancing robotics and supporting technologies. They aim to transform how we live, work, and play through innovative solutions. Joining MassRobotics means becoming part of a global community of experts and like-minded entrepreneurs. These startups cover a range of stages, from concept to manufacturing, and focus on robotics, Physical AI, and connected devices. See below for opportunities across the globe.</p>
+  </div>
+</section>
 <main>
-<form class="search" role="search">
-  <input type="search" id="job-search" placeholder="Search job titles or locations, e.g. engineer, Boston, remote" aria-label="Search job titles or locations" autocomplete="off">
-  <button type="submit">Search</button>
-  <button type="button" class="search-clear" hidden>Clear</button>
-</form>
-<div class="summary">
-  <span class="summary-count" aria-live="polite"><strong>342</strong> open roles found</span>
+<div class="search-card">
+  <form class="search" role="search">
+    <input type="search" id="job-search" placeholder="Search job titles or locations, e.g. engineer, Boston, remote" aria-label="Search job titles or locations" autocomplete="off">
+    <button type="submit">Search</button>
+    <button type="button" class="search-clear" hidden>Clear</button>
+  </form>
+  <span class="summary-count" aria-live="polite"><strong>341</strong> open roles found</span>
   <p class="disclaimer">We never charge for listing jobs. MassRobotics is not a job board or recruiter. These listings are all scraped from public data; we offer no guarantee on the accuracy of the data.</p>
-  <p class="intro">MassRobotics resident startups are dynamic companies dedicated to advancing robotics and supporting technologies. They aim to transform how we live, work, and play through innovative solutions. Joining MassRobotics means becoming part of a global community of experts and like-minded entrepreneurs. These startups cover a range of stages, from concept to manufacturing, and focus on robotics, Physical AI, and connected devices.</p>
-  <p class="intro">See below for opportunities across the globe.</p>
 </div>
 <div class="company">
   <div class="company-header">
@@ -211,17 +347,17 @@ ul.jobs li .no-link { color: #333; }
   <p class="company-desc">Almetra uses AI-powered cameras to give factories real-time visibility into what’s actually happening on their production lines — connecting that visual data with existing plant systems to show where time, output, or revenue is being lost. Manufacturers use it to spot problems faster and get AI-driven recommendations for fixing them, turning the factory floor into something as measurable and optimizable as a website.</p>
   <ul class="jobs">
     <li class="jobs-head"><span class="job-title"></span><button class="sort-btn" data-key="posted">Posted</button><button class="sort-btn" data-key="location">Location</button></li>
-    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/8666e2e1-6c18-47d2-8939-c30a907e24c0" target="_blank">EngineeringAI Edge Deployment Engineer</a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
-    <li data-posted="2026-02-01"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/91a0dd55-d1eb-4f2c-a601-5a867d86d0ae" target="_blank">CommercialContinuous Improvement Manager (AI Startup)Berlin€65K - €85KApply</a><span class="job-date">Feb 1, 2026</span><span class="job-location" title="Berlin">Berlin</span></li>
-    <li data-posted="2026-01-05"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/8fff5f68-1546-435e-b60e-04af7f253038" target="_blank">EngineeringField Installation Engineer (AI Startup)</a><span class="job-date">Jan 5, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
-    <li data-posted="2025-11-26"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/f62be31f-ffa4-4111-9177-01bbf676ec7c" target="_blank">CommercialManufacturing Solution Engineer (AI Startup)Berlin€65K - €85KApply</a><span class="job-date">Nov 26, 2025</span><span class="job-location" title="Berlin">Berlin</span></li>
-    <li data-posted="2026-02-24"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/d0edf3b5-8975-4f6b-8d97-fe88ec40bfe1" target="_blank">EngineeringPlatform Engineer (m/f/d) (AI Startup)Berlin€70K - €85KApply</a><span class="job-date">Feb 24, 2026</span><span class="job-location" title="Berlin">Berlin</span></li>
-    <li data-posted="2025-12-29"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/71750eda-f1b5-4332-8c01-d95df3a73a78" target="_blank">CommercialSales Development Representative (AI Startup)Berlin€40K - €50KApply</a><span class="job-date">Dec 29, 2025</span><span class="job-location" title="Berlin; Munich">Multiple</span></li>
-    <li data-posted="2025-05-07"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/5ede6aaa-24e6-4b35-8966-369b052c2b1b" target="_blank">EngineeringSenior Computer Vision Engineer (m/f/d)BerlinNot disclosedApply</a><span class="job-date">May 7, 2025</span><span class="job-location" title="Berlin">Berlin</span></li>
-    <li data-posted="2026-09-12"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/b2dbd0d6-1d51-4533-a767-4a86f4ce4b6c" target="_blank">CommercialSenior Manager, Account-Based MarketingBerlinNot disclosedApply</a><span class="job-date">Sep 12, 2026</span><span class="job-location" title="Berlin; Munich">Multiple</span></li>
-    <li data-posted="2026-05-12"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/2907dd40-8412-4bc0-bc55-8c97cf0b84ee" target="_blank">ResearchSenior/Staff Robotics Engineer (m/f/d)</a><span class="job-date">May 12, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
-    <li data-posted="2026-09-24"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/d7851cb9-b5d4-418e-9ab6-f8bd3a8c1956" target="_blank">CommercialTechnical Customer Success Manager (AI Manufacturing Enterprise)BerlinNot disclosedApply</a><span class="job-date">Sep 24, 2026</span><span class="job-location" title="Berlin (remote)">Remote</span></li>
-    <li data-posted="2025-12-18"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/b8351589-c353-401b-ae61-98b2c9c47d30" target="_blank">EngineeringVLM Research Engineer (m/f/d)</a><span class="job-date">Dec 18, 2025</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
+    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/8666e2e1-6c18-47d2-8939-c30a907e24c0" target="_blank">AI Edge Deployment Engineer</a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
+    <li data-posted="2026-02-01"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/91a0dd55-d1eb-4f2c-a601-5a867d86d0ae" target="_blank">Continuous Improvement Manager (AI Startup)</a><span class="job-date">Feb 1, 2026</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2026-01-05"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/8fff5f68-1546-435e-b60e-04af7f253038" target="_blank">Field Installation Engineer (AI Startup)</a><span class="job-date">Jan 5, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
+    <li data-posted="2025-11-26"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/f62be31f-ffa4-4111-9177-01bbf676ec7c" target="_blank">Manufacturing Solution Engineer (AI Startup)</a><span class="job-date">Nov 26, 2025</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2026-02-24"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/d0edf3b5-8975-4f6b-8d97-fe88ec40bfe1" target="_blank">Platform Engineer (m/f/d) (AI Startup)</a><span class="job-date">Feb 24, 2026</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2025-12-29"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/71750eda-f1b5-4332-8c01-d95df3a73a78" target="_blank">Sales Development Representative (AI Startup)</a><span class="job-date">Dec 29, 2025</span><span class="job-location" title="Berlin; Munich">Multiple</span></li>
+    <li data-posted="2025-05-07"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/5ede6aaa-24e6-4b35-8966-369b052c2b1b" target="_blank">Senior Computer Vision Engineer (m/f/d)</a><span class="job-date">May 7, 2025</span><span class="job-location" title="Berlin">Berlin</span></li>
+    <li data-posted="2026-09-12"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/b2dbd0d6-1d51-4533-a767-4a86f4ce4b6c" target="_blank">Senior Manager, Account-Based Marketing</a><span class="job-date">Sep 12, 2026</span><span class="job-location" title="Berlin; Munich">Multiple</span></li>
+    <li data-posted="2026-05-12"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/2907dd40-8412-4bc0-bc55-8c97cf0b84ee" target="_blank">Senior/Staff Robotics Engineer (m/f/d)</a><span class="job-date">May 12, 2026</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
+    <li data-posted="2026-09-24"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/d7851cb9-b5d4-418e-9ab6-f8bd3a8c1956" target="_blank">Technical Customer Success Manager (AI Manufacturing Enterprise)</a><span class="job-date">Sep 24, 2026</span><span class="job-location" title="Berlin (remote)">Remote</span></li>
+    <li data-posted="2025-12-18"><a class="job-title" href="https://jobs.ashbyhq.com/almetra/b8351589-c353-401b-ae61-98b2c9c47d30" target="_blank">VLM Research Engineer (m/f/d)</a><span class="job-date">Dec 18, 2025</span><span class="job-location" title="Onsite Berlin">Berlin</span></li>
   </ul>
 </div>
 <div class="company">
@@ -257,7 +393,7 @@ ul.jobs li .no-link { color: #333; }
   <div class="company-header">
     <a class="company-logo-link" href="https://www.codemetal.ai/company#open-roles" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2024/03/CODE-METAL-LOGO-2026-1500x205.png" alt="Code Metal" loading="lazy"></a>
     <span class="company-name"><a href="https://www.codemetal.ai/company#open-roles" target="_blank">Code Metal career page</a></span>
-    <span class="job-count">37 roles</span>
+    <span class="job-count">38 roles</span>
   </div>
   <p class="company-desc">Code Metal revolutionizes software development by autonomously translating high-level research code into production-ready software. Our AI-powered platform accelerates the transition from algorithmic breakthroughs to real-time software that runs at the edge.</p>
   <ul class="jobs">
@@ -299,6 +435,7 @@ ul.jobs li .no-link { color: #333; }
     <li data-posted="2026-10-08"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/a6acbbd8-4c73-48db-8780-cd3abf886c16" target="_blank">Proposal Coordinator</a><span class="job-date">Oct 8, 2026</span><span class="job-location" title="Remote; San Francisco Hub; Boston Hub; Washington DC Office">Remote</span></li>
     <li data-posted="2026-10-09"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/108e4472-03d2-44dd-8d5c-78c075036b2d" target="_blank">Senior AI Platform Engineer</a><span class="job-date">Oct 9, 2026</span><span class="job-location" title="Boston Hub; Remote; San Francisco Hub; Washington DC Office (hybrid)">Multiple</span></li>
     <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/3d0c7ce7-b5ce-4b2d-842e-7f2017d2dc8d" target="_blank">Staff Software Engineer in Test (Modeling and Simulation)</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="San Francisco Hub (hybrid)">Hybrid</span></li>
+    <li data-posted="2026-10-28"><a class="job-title" href="https://jobs.ashbyhq.com/code-metal/4c02374d-030c-4759-81b9-0915aa8b3192" target="_blank">IP and Regulatory Counsel</a><span class="job-date">Oct 28, 2026</span><span class="job-location" title="Washington DC Office; San Francisco Hub; Boston Hub (hybrid)">Multiple</span></li>
   </ul>
 </div>
 <div class="company">
@@ -372,7 +509,7 @@ ul.jobs li .no-link { color: #333; }
   <div class="company-header">
     <a class="company-logo-link" href="https://thehumanoid.ai/careers/" target="_blank"><img class="company-logo" src="https://www.massrobotics.org/wp-content/uploads/2025/10/logo_default-Colin-McCormick.png" alt="Humanoid" loading="lazy"></a>
     <span class="company-name"><a href="https://thehumanoid.ai/careers/" target="_blank">Humanoid career page</a></span>
-    <span class="job-count">99 roles</span>
+    <span class="job-count">97 roles</span>
   </div>
   <p class="company-desc">Empowering humanity by building the most reliable, safe, and helpful humanoid robots. We strategically focus on labor-intensive operations that current automation technologies cannot effectively address by developing a general-purpose humanoid robot.</p>
   <ul class="jobs">
@@ -443,8 +580,7 @@ ul.jobs li .no-link { color: #333; }
     <li data-posted="2026-08-21"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/fd2e5af4-9583-426c-820c-e968b4a06fec" target="_blank">Robotics Controls Engineer</a><span class="job-date">Aug 21, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
     <li data-posted="2026-08-25"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8cc1ec58-ff9a-4670-b1da-a2011bced10d" target="_blank">Senior HR Operations Manager</a><span class="job-date">Aug 25, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-09-02"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/ad93cc97-6286-4358-9513-11d651541f43" target="_blank">Buyer - Directs (Contract)</a><span class="job-date">Sep 2, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
-    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/7a8bc969-ad69-4cfe-b0cb-8929ce688be5" target="_blank">Senior Group Accountant </a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
-    <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/a0e3784e-8340-4929-8a13-53afd1a084bc" target="_blank">Head of Investor Relations </a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
+    <li data-posted="2026-10-29"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/7a8bc969-ad69-4cfe-b0cb-8929ce688be5" target="_blank">Senior Group Accountant </a><span class="job-date">Oct 29, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8800e9f2-04a1-4398-abe1-a87ec939e5fa" target="_blank">Finance Operations Analyst</a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-09-07"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/cdaeb1a1-4ca6-4fb5-a478-2c8950ede37c" target="_blank">VP of Sales</a><span class="job-date">Sep 7, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-09-23"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/b9475cc1-bd0a-40e5-ab78-687a1c51ca04" target="_blank">Director, Government Relations &amp; Public Affairs</a><span class="job-date">Sep 23, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
@@ -455,7 +591,7 @@ ul.jobs li .no-link { color: #333; }
     <li data-posted="2026-09-17"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/294d3f49-7694-40dd-9bcc-732e97237b58" target="_blank">Senior Autonomy Engineer - Spatial Intelligence</a><span class="job-date">Sep 17, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-09-25"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/6f499ea5-93cf-44cb-a820-21a2c49c818b" target="_blank">Principal Product Cybersecurity Assurance Engineer</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
     <li data-posted="2026-10-15"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/c234c345-4481-421e-a410-a701e1bed42d" target="_blank">Lead Prototype Engineer</a><span class="job-date">Oct 15, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
-    <li data-posted="2026-10-28"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/f90e4699-5edd-49be-9b42-1008be75c2bb" target="_blank">Field Operations Team Lead / Shift Supervisor</a><span class="job-date">Oct 28, 2026</span><span class="job-location" title="Germany">Germany</span></li>
+    <li data-posted="2026-10-29"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/f90e4699-5edd-49be-9b42-1008be75c2bb" target="_blank">Field Operations Team Lead / Shift Supervisor</a><span class="job-date">Oct 29, 2026</span><span class="job-location" title="Germany">Germany</span></li>
     <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/433fadd1-b71c-4523-a909-8aae4f000c94" target="_blank">Mechanical Design Engineer - Robotic Hand</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
     <li data-posted="2026-09-25"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/4492b9f9-0dfd-46ca-94ef-10503f096c99" target="_blank">AI Data Collector - Night Shift</a><span class="job-date">Sep 25, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-09-29"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/35a6c958-6965-4130-9934-e66c94567533" target="_blank">Director &amp; Associate General Counsel - North America</a><span class="job-date">Sep 29, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
@@ -463,9 +599,7 @@ ul.jobs li .no-link { color: #333; }
     <li data-posted="2026-10-01"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8770d37c-6570-4531-9d6a-59c47a4c1bbe" target="_blank">VP of Sales </a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
     <li data-posted="2026-10-01"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/25162c54-493a-456c-840c-9d5f9417017e" target="_blank">VP of Sales</a><span class="job-date">Oct 1, 2026</span><span class="job-location" title="US (Remote); US, San Diego, CA">Remote</span></li>
     <li data-posted="2026-10-06"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/6dbb1c4d-7d75-48ea-9c8d-0a8d7a232610" target="_blank">HR Manager</a><span class="job-date">Oct 6, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
-    <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/214e05bd-2525-4a22-8847-a3dc5fb507fa" target="_blank">Senior Colour, Materials &amp; Finish  Designer</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-10-14"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/9c2cf12e-0d99-47f4-ae29-cda882955c8e" target="_blank">Warehouse Operative Specialist</a><span class="job-date">Oct 14, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
-    <li data-posted="2026-10-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/fcde3055-3cef-4194-ad82-42969a1edf95" target="_blank">Head of Strategic Finance</a><span class="job-date">Oct 12, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-10-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/1c2711b5-4286-4c8a-95b6-fd2dfe338f6b" target="_blank">Business Development Specialist</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-10-13"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/446715c5-6f38-449b-b1d8-af2166b4fa5c" target="_blank">VP, Capital Formation &amp; Strategic Partnerships</a><span class="job-date">Oct 13, 2026</span><span class="job-location" title="US (Remote)">Remote</span></li>
     <li data-posted="2026-10-12"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/eb0505fd-e4a4-443f-ba5d-3751b58c2178" target="_blank">Head of Solutions Engineering</a><span class="job-date">Oct 12, 2026</span><span class="job-location" title="US, Boston, MA (onsite)">Boston</span></li>
@@ -476,6 +610,7 @@ ul.jobs li .no-link { color: #333; }
     <li data-posted="2026-10-21"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/8d34a206-156d-4c29-a14b-c124fb3f11eb" target="_blank">Head of Workplace &amp; Facilities</a><span class="job-date">Oct 21, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-10-22"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/a464dfbe-50c6-4194-893a-8a01241e992c" target="_blank">Cloud Infrastructure Engineer</a><span class="job-date">Oct 22, 2026</span><span class="job-location" title="UK, London (onsite)">London</span></li>
     <li data-posted="2026-10-26"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/07e8a5a4-dc80-497d-9c8b-e4386a5fc75d" target="_blank">Senior Prototype Engineer</a><span class="job-date">Oct 26, 2026</span><span class="job-location" title="Canada, Vancouver, BC (onsite)">Vancouver</span></li>
+    <li data-posted="2026-10-28"><a class="job-title" href="https://jobs.ashbyhq.com/humanoid/7118d150-7014-418b-ac7f-e720151f530a" target="_blank">Senior Robotics Integration Engineer </a><span class="job-date">Oct 28, 2026</span><span class="job-location" title="US, San Diego, CA (onsite)">San Diego</span></li>
   </ul>
 </div>
 <div class="company">
@@ -730,6 +865,9 @@ ul.jobs li .no-link { color: #333; }
   </ul>
 </div>
 </main>
+<footer>
+  <a href="https://www.massrobotics.org/">MassRobotics</a> &middot; Resident startup jobs &middot; Last updated 2026-10-29 10:14:36
+</footer>
 <script>
 // Clicking "Posted" or "Location" sorts every company's job list by that
 // column; clicking it again reverses the order. Jobs missing the value
