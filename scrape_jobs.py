@@ -11,6 +11,7 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+from functools import lru_cache
 from threading import Lock, local
 from urllib.parse import urljoin, urlparse
 
@@ -133,7 +134,7 @@ KNOWN_JOB_BOARDS = {
     "lever.co", "greenhouse.io", "ashbyhq.com", "bamboohr.com",
     "workday.com", "myworkday.com", "icims.com", "smartrecruiters.com",
     "jobvite.com", "recruitee.com", "notion.so", "odoo.com", "workable.com",
-    "rippling.com",
+    "rippling.com", "gem.com", "dover.com",
 }
 
 # Regex to find a direct href to a job board with a reliable API in page source.
@@ -143,8 +144,9 @@ KNOWN_JOB_BOARDS = {
 # JS-rendered; we get better results scraping the company's own careers page
 # (where the jobs are typically rendered server-side).
 _BOARD_HREF_RE = re.compile(
-    r'https?://(?:apply\.workable\.com|jobs\.lever\.co|boards\.greenhouse\.io'
-    r'|ats\.rippling\.com/[A-Za-z0-9_-]+)/[A-Za-z0-9_-]+/?',
+    r'https?://(?:apply\.workable\.com|jobs\.lever\.co|(?:job-)?boards\.greenhouse\.io'
+    r'|jobs\.gem\.com|(?:careers|jobs)\.smartrecruiters\.com'
+    r'|ats\.rippling\.com/[A-Za-z0-9_-]+)/(?!embed\b)[A-Za-z0-9_-]+/?',
     re.IGNORECASE,
 )
 
@@ -372,11 +374,22 @@ def _probe_career_path(url, company_domain):
         return None
     # If the careers page directly links to a known job board
     # (e.g. dephy.com/careers → apply.workable.com/dephy/),
-    # prefer the board URL so the HTML careers link is accurate.
-    m = _BOARD_HREF_RE.search(resp.text)
-    if m:
-        return m.group(0).rstrip("/") + "/"
+    # prefer the board URL so the HTML careers link is accurate — but only a
+    # board that lists jobs, since pages can keep stale links to an old board
+    # (e.g. Dusty Robotics: a dead Greenhouse posting beside a live Rippling
+    # widget). Otherwise keep the company page, whose source gets scanned.
+    for board_url in dict.fromkeys(m.group(0).rstrip("/") + "/"
+                                   for m in _BOARD_HREF_RE.finditer(resp.text)):
+        if _board_url_has_jobs(board_url):
+            return board_url
     return final_url
+
+
+@lru_cache(maxsize=None)
+def _board_url_has_jobs(board_url):
+    """Whether a job board URL lists any jobs (cached: several probed career
+    paths often land on the same page, linking the same board)."""
+    return bool(jobs_from_board_url(board_url))
 
 
 def find_careers_url(company_url):
@@ -628,6 +641,125 @@ def extract_rippling(slug, page_url):
             seen.add(title)
             jobs.append({"title": title, "url": full_url})
     return jobs
+
+
+_GEM_QUERY = """query JobBoardList($boardId: String!) {
+  oatsExternalJobPostings(boardId: $boardId) {
+    jobPostings { extId title locations { name city isRemote } job { locationType } }
+  }
+}"""
+
+
+def extract_gem(slug):
+    """Gem job board (jobs.gem.com/{slug}): its public GraphQL API."""
+    resp = make_request(
+        "https://jobs.gem.com/api/public/graphql/batch",
+        method="post",
+        json=[{"operationName": "JobBoardList", "variables": {"boardId": slug},
+               "query": _GEM_QUERY}],
+        headers={**HEADERS, "Content-Type": "application/json"},
+    )
+    if resp is None:
+        return []
+    try:
+        postings = resp.json()[0]["data"]["oatsExternalJobPostings"]["jobPostings"]
+    except Exception:
+        return []
+    jobs = []
+    for item in postings:
+        title = (item.get("title") or "").strip()
+        if not title or not is_job_title(title):
+            continue
+        locs = item.get("locations") or []
+        workplace = (item.get("job") or {}).get("locationType") or ""
+        workplace = {"IN_OFFICE": "onsite", "HYBRID": "hybrid",
+                     "REMOTE": "remote"}.get(workplace, workplace)
+        if not workplace and locs and all(l.get("isRemote") for l in locs):
+            workplace = "remote"
+        jobs.append({
+            "title": title,
+            "url": f"https://jobs.gem.com/{slug}/{item['extId']}" if item.get("extId") else None,
+            **location_fields([l.get("city") or l.get("name") for l in locs], workplace),
+        })
+    return jobs
+
+
+def extract_smartrecruiters(company_id):
+    """SmartRecruiters public postings API (careers.smartrecruiters.com/{id})."""
+    jobs = []
+    offset = 0
+    while True:
+        resp = make_request(
+            f"https://api.smartrecruiters.com/v1/companies/{company_id}/postings",
+            params={"limit": 100, "offset": offset},
+        )
+        if resp is None:
+            break
+        try:
+            data = resp.json()
+        except Exception:
+            break
+        content = data.get("content") or []
+        for item in content:
+            title = (item.get("name") or "").strip()
+            if not title or not is_job_title(title):
+                continue
+            loc = item.get("location") or {}
+            workplace = "remote" if loc.get("remote") else "hybrid" if loc.get("hybrid") else None
+            jobs.append({
+                "title": title,
+                "url": f"https://jobs.smartrecruiters.com/{company_id}/{item['id']}",
+                "posted": parse_date(item.get("releasedDate")),
+                **location_fields([", ".join(filter(None, [loc.get("city"), loc.get("region")]))
+                                   or loc.get("fullLocation")], workplace),
+            })
+        offset += len(content)
+        if not content or offset >= data.get("totalFound", 0):
+            break
+    return jobs
+
+
+_ODOO_JOB_HREF_RE = re.compile(r"/jobs/(?:detail/)?[a-z0-9-]+-\d+/?$", re.IGNORECASE)
+
+
+def extract_odoo(base_url):
+    """
+    Odoo HR website module ({base}/jobs, paginated as /jobs/page/N). Job links
+    look like /jobs/{title-slug}-{id}; the card's heading is the job title.
+    """
+    jobs = []
+    seen = set()
+    for page in range(1, 11):
+        url = f"{base_url}/jobs" if page == 1 else f"{base_url}/jobs/page/{page}"
+        soup = get_soup(url)
+        if soup is None:
+            break
+        new = 0
+        for a in soup.find_all("a", href=True):
+            href = urljoin(url, a["href"]).split("?")[0].split("#")[0]
+            if not _ODOO_JOB_HREF_RE.search(urlparse(href).path) or href in seen:
+                continue
+            heading = a.find(["h2", "h3", "h4", "h5"])
+            title = (heading or a).get_text(" ", strip=True)
+            # These links are known job postings, so a long title is fine as
+            # long as it names a role (is_job_title caps titles at 10 words)
+            if not title or not (is_job_title(title) or (
+                    len(title) <= 150 and STRONG_KEYWORD_RE.search(title))):
+                continue
+            seen.add(href)
+            new += 1
+            jobs.append({"title": title, "url": href, **_card_locations(a)})
+        if not new or not soup.find("a", href=re.compile(rf"/jobs/page/{page + 1}\b")):
+            break
+    return jobs
+
+
+def _odoo_base(url):
+    """The site root of an Odoo-hosted careers URL, or None if it isn't one."""
+    netloc = urlparse(url).netloc.lower()
+    if netloc.endswith(".odoo.com") or netloc.startswith("odoo."):
+        return f"https://{netloc}"
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -1150,7 +1282,7 @@ def extract_jobs_from_html(url, soup=None):
     # capture the job URL via find_job_url_near().
     if len(jobs) < 2:
         for scope in search_scope:
-            for tag in scope.find_all(["h2", "h3", "h4", "li", "dt", "p"]):
+            for tag in scope.find_all(["h2", "h3", "h4", "h5", "li", "dt", "p"]):
                 # Skip if this element contains nested block tags (complex structure)
                 if tag.find(["ul", "ol", "div", "section"]):
                     continue
@@ -1229,7 +1361,79 @@ _EMBED_PATTERNS = [
     # Rippling ATS: ats.rippling.com/{slug}/jobs
     (re.compile(r"ats\.rippling\.com/([A-Za-z0-9_-]+)/jobs",
                 re.IGNORECASE), "rippling"),
+    # Rippling board widget script: calls api.rippling.com/.../board/${slug}/jobs
+    # with the slug in its config, e.g. { slug: 'dusty-robotics-inc' }
+    (re.compile(r"api\.rippling\.com/platform/api/ats/v1/board/[\s\S]{0,3000}?"
+                r"\bslug[\"']?\s*[:=]\s*[\"']([A-Za-z0-9_-]+)[\"']"
+                r"|\bslug[\"']?\s*[:=]\s*[\"']([A-Za-z0-9_-]+)[\"'][\s\S]{0,3000}?"
+                r"api\.rippling\.com/platform/api/ats/v1/board/",
+                re.IGNORECASE), "rippling"),
+    # Gem: jobs.gem.com/{slug}
+    (re.compile(r"jobs\.gem\.com/([A-Za-z0-9_-]+)", re.IGNORECASE), "gem"),
+    # SmartRecruiters: careers.smartrecruiters.com/{id} or jobs.smartrecruiters.com/{id}
+    (re.compile(r"(?:careers|jobs)\.smartrecruiters\.com/([A-Za-z0-9_-]+)",
+                re.IGNORECASE), "smartrecruiters"),
 ]
+
+
+def _jobs_from_board(board, slug):
+    """Run the extractor for one detected job board."""
+    if board == "lever":
+        return extract_lever(slug)
+    if board == "greenhouse":
+        return extract_greenhouse(slug)
+    if board == "ashby":
+        return extract_ashby(slug, f"https://jobs.ashbyhq.com/{slug}")
+    if board == "bamboohr":
+        return extract_bamboohr(slug, f"https://{slug}.bamboohr.com/jobs/")
+    if board == "workable":
+        return extract_workable(slug, f"https://apply.workable.com/{slug}/")
+    if board == "rippling":
+        return extract_rippling(slug, f"https://ats.rippling.com/{slug}/jobs")
+    if board == "gem":
+        return extract_gem(slug)
+    if board == "smartrecruiters":
+        return extract_smartrecruiters(slug)
+    return []
+
+
+_ODOO_HOST_RE = re.compile(
+    r"https?://((?:[A-Za-z0-9_-]+\.odoo\.com)|(?:odoo\.[A-Za-z0-9.-]+\.[A-Za-z]{2,}))"
+    r"(?:/[a-z]{2}(?:_[A-Z]{2})?)?/job", re.IGNORECASE)
+
+
+def jobs_from_page_source(source):
+    """
+    Scan page source for references to job boards we can query, and return the
+    jobs from the first board that has any. A page can reference several
+    boards (e.g. a stale Greenhouse job link next to a live Rippling widget),
+    so every match is tried. Returns None if no board is referenced at all,
+    or [] if boards are referenced but list no jobs.
+    """
+    found = False
+    tried = set()
+    for pattern, board in _EMBED_PATTERNS:
+        for m in pattern.finditer(source):
+            slug = next((g for g in m.groups() if g), "").lower()
+            # Sanity: slug should look reasonable (not a long URL fragment)
+            if not slug or len(slug) > 60 or slug in ("embed", "api", "v1") \
+                    or (board, slug) in tried:
+                continue
+            tried.add((board, slug))
+            found = True
+            jobs = _jobs_from_board(board, slug)
+            if jobs:
+                return jobs
+
+    # Odoo HR module: company.odoo.com/jobs or odoo.company.com/jobs
+    # (possibly with a locale prefix, or only a /job-application link)
+    for host in dict.fromkeys(m.group(1).lower() for m in _ODOO_HOST_RE.finditer(source)):
+        found = True
+        jobs = extract_odoo(f"https://{host}")
+        if jobs:
+            return jobs
+
+    return [] if found else None
 
 
 def detect_embedded_job_board(careers_url):
@@ -1240,39 +1444,7 @@ def detect_embedded_job_board(careers_url):
     resp = make_request(careers_url)
     if resp is None:
         return None
-
-    source = resp.text
-    for pattern, board in _EMBED_PATTERNS:
-        m = pattern.search(source)
-        if not m:
-            continue
-        slug = m.group(1).lower()
-        # Sanity: slug should look reasonable (not a long URL fragment)
-        if len(slug) > 60 or "/" in slug:
-            continue
-        if board == "lever":
-            return extract_lever(slug)
-        if board == "greenhouse":
-            return extract_greenhouse(slug)
-        if board == "ashby":
-            return extract_ashby(slug, f"https://jobs.ashbyhq.com/{slug}")
-        if board == "bamboohr":
-            return extract_bamboohr(slug, f"https://{slug}.bamboohr.com/jobs/")
-        if board == "workable":
-            return extract_workable(slug, f"https://apply.workable.com/{slug}/")
-        if board == "rippling":
-            return extract_rippling(slug, f"https://ats.rippling.com/{slug}/jobs")
-
-    # Odoo HR module: company.odoo.com/jobs (possibly with locale prefix)
-    m = re.search(
-        r"https?://([A-Za-z0-9_-]+)\.odoo\.com(?:/[a-z]{2}(?:_[A-Z]{2})?)?/jobs",
-        source, re.IGNORECASE,
-    )
-    if m:
-        odoo_url = m.group(0)
-        return extract_jobs_from_html(odoo_url)
-
-    return None
+    return jobs_from_page_source(resp.text)
 
 
 # ---------------------------------------------------------------------------
@@ -1312,6 +1484,10 @@ def extract_jobs_with_playwright(url):
     html = render_with_playwright(url)
     if html is None:
         return []
+    # JS-built pages may only reveal their job board link once rendered
+    board_jobs = jobs_from_page_source(html)
+    if board_jobs:
+        return board_jobs
     return extract_jobs_from_html(url, soup=BeautifulSoup(html, "lxml"))
 
 
@@ -1349,6 +1525,40 @@ def extract_jobs(careers_url):
     if not careers_url:
         return []
 
+    jobs = jobs_from_board_url(careers_url)
+    if jobs is not None:
+        return jobs
+
+    # For company-hosted careers pages, scan the page source for embedded job
+    # board API/widget references (e.g. Lever embed on a company's own domain).
+    embedded = detect_embedded_job_board(careers_url)
+    if embedded:
+        return embedded
+
+    # Generic HTML scrape for everything else
+    jobs = extract_jobs_from_html(careers_url)
+
+    # Sanity check: if we got ≥3 results but NONE have a strong job keyword
+    # (e.g. "engineer", "manager"), we've probably scraped a product/marketing page.
+    if len(jobs) >= 3:
+        strong = sum(1 for j in jobs if STRONG_KEYWORD_RE.search(j["title"]))
+        if strong == 0:
+            jobs = []
+
+    # If HTML scraping returned nothing, try a real browser. This covers
+    # Cloudflare-protected boards (e.g. Gusto), JS-rendered React/Next.js
+    # pages, and any board we haven't explicitly coded for.
+    if not jobs:
+        jobs = extract_jobs_with_playwright(careers_url)
+
+    return jobs
+
+
+def jobs_from_board_url(careers_url):
+    """
+    If the URL is on a job board we have an extractor for, return its jobs
+    (possibly []). Returns None for any other URL.
+    """
     lower = careers_url.lower()
 
     # Lever
@@ -1387,29 +1597,22 @@ def extract_jobs(careers_url):
     if "jobs.gusto.com/boards/" in lower:
         return extract_gusto(careers_url)
 
-    # For company-hosted careers pages, scan the page source for embedded job
-    # board API/widget references (e.g. Lever embed on a company's own domain).
-    embedded = detect_embedded_job_board(careers_url)
-    if embedded:
-        return embedded
+    # Gem
+    m = re.search(r"jobs\.gem\.com/([^/?#]+)", lower)
+    if m:
+        return extract_gem(m.group(1))
 
-    # Generic HTML scrape for everything else
-    jobs = extract_jobs_from_html(careers_url)
+    # SmartRecruiters
+    m = re.search(r"(?:careers|jobs)\.smartrecruiters\.com/([^/?#]+)", careers_url, re.I)
+    if m:
+        return extract_smartrecruiters(m.group(1))
 
-    # Sanity check: if we got ≥3 results but NONE have a strong job keyword
-    # (e.g. "engineer", "manager"), we've probably scraped a product/marketing page.
-    if len(jobs) >= 3:
-        strong = sum(1 for j in jobs if STRONG_KEYWORD_RE.search(j["title"]))
-        if strong == 0:
-            jobs = []
+    # Odoo
+    base = _odoo_base(careers_url)
+    if base:
+        return extract_odoo(base)
 
-    # If HTML scraping returned nothing, try a real browser. This covers
-    # Cloudflare-protected boards (e.g. Gusto), JS-rendered React/Next.js
-    # pages, and any board we haven't explicitly coded for.
-    if not jobs:
-        jobs = extract_jobs_with_playwright(careers_url)
-
-    return jobs
+    return None
 
 
 # ---------------------------------------------------------------------------
