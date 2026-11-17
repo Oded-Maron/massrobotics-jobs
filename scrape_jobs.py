@@ -122,6 +122,12 @@ RESIDENT_DOMAIN_BLACKLIST = {
     "google.com", "apple.com", "massrobotics.org",
 }
 
+# Residents missing from the MassRobotics resident page; merged into the
+# scraped list (skipped if the page already lists the same domain)
+EXTRA_RESIDENTS = [
+    {"name": "Braid Robotics", "url": "https://www.braidrobotics.com"},
+]
+
 # Known job board domains (for validating careers URL redirects)
 KNOWN_JOB_BOARDS = {
     "lever.co", "greenhouse.io", "ashbyhq.com", "bamboohr.com",
@@ -260,6 +266,11 @@ def get_residents():
         print("WARNING: no resident cards found; falling back to link scan "
               "(no logos or descriptions).", file=sys.stderr)
         residents = _residents_from_links(soup)
+
+    known = {urlparse(r["url"]).netloc.lower().removeprefix("www.") for r in residents}
+    for extra in EXTRA_RESIDENTS:
+        if urlparse(extra["url"]).netloc.lower().removeprefix("www.") not in known:
+            residents.append(dict(extra))
 
     print(f"Found {len(residents)} residents.")
     return residents
@@ -1200,8 +1211,11 @@ _EMBED_PATTERNS = [
     # Lever: api.lever.co/v0/postings/{slug} or jobs.lever.co/{slug}
     (re.compile(r"(?:api\.lever\.co/v0/postings|jobs\.lever\.co)/([A-Za-z0-9_-]+)",
                 re.IGNORECASE), "lever"),
-    # Greenhouse: boards.greenhouse.io/{slug} or boards-api.greenhouse.io/v1/boards/{slug}
-    (re.compile(r"boards(?:-api)?\.greenhouse\.io/(?:v1/boards/)?([A-Za-z0-9_-]+)",
+    # Greenhouse embed script/iframe: boards.greenhouse.io/embed/job_board[/js]?for={slug}
+    (re.compile(r"greenhouse\.io/embed/job_board(?:/js)?\?(?:[^\"'\s]*&(?:amp;)?)?for=([A-Za-z0-9_-]+)",
+                re.IGNORECASE), "greenhouse"),
+    # Greenhouse: (job-)boards.greenhouse.io/{slug} or boards-api.greenhouse.io/v1/boards/{slug}
+    (re.compile(r"(?:job-)?boards(?:-api)?\.greenhouse\.io/(?:v1/boards/)?(?!embed\b)([A-Za-z0-9_-]+)",
                 re.IGNORECASE), "greenhouse"),
     # Ashby: jobs.ashbyhq.com/{slug}
     (re.compile(r"jobs\.ashbyhq\.com/([A-Za-z0-9_-]+)",
@@ -1343,7 +1357,9 @@ def extract_jobs(careers_url):
         return extract_lever(m.group(1))
 
     # Greenhouse
-    m = re.search(r"boards\.greenhouse\.io/([^/?#]+)", lower)
+    m = re.search(r"greenhouse\.io/embed/job_board(?:/js)?\?(?:[^#]*&)?for=([^&#]+)", lower)
+    if not m:
+        m = re.search(r"(?:job-)?boards\.greenhouse\.io/(?!embed\b)([^/?#]+)", lower)
     if m:
         return extract_greenhouse(m.group(1))
 
